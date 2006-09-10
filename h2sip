@@ -1,0 +1,263 @@
+#!/usr/bin/env python
+
+import glob
+import os
+import pprint
+import re
+import shutil
+import sys
+
+from distutils.dep_util import newer
+
+from declaration import *
+from gccxmlparser import GccXmlParser
+from boilerplate import head, keywords, tail, sip_spec_for
+import fill
+
+
+def get_exported_classes(headers, export_specifier):
+    result = {}
+
+    pattern = re.compile(
+        r'\s*(class)\s+(%s)\s+(?P<name>\w+)' % export_specifier
+        )
+
+    for header in headers:
+        classes = []
+        for line in open(header):
+            match = re.match(pattern, line)
+            if match:
+                table = match.groupdict()
+                classes.append(table['name'])
+        result[header] = classes
+
+    return result
+
+# get_exported_classes
+
+def get_qt_access(headers):
+    result = {}
+    pattern = re.compile(r'\s*Q_OBJECT'
+                        '|\s*public\s+slots\s*:'
+                        '|\s*protected\s+slots\s*:'
+                        '|\s*private\s+slots\s*:'
+                        '|\s*signals\s*:'
+                        '|\s*public\s*:'
+                        '|\s*protected\s*:'
+                        '|\s*private\s*:'
+                        )
+    for header in headers:
+        tags = []
+        for i, line in enumerate(open(header)):
+            match = re.match(pattern, line)
+            if match:
+                if match.group(0).endswith('Q_OBJECT'):
+                    tags.append((i+1, 'Q_OBJECT'))
+                else:
+                    # remove trailing ':' and collapse multiple spaces
+                    tags.append((i+1, ' '.join(match.group(0)[:-1].split())))
+        result[header] = tags
+
+    return result
+
+# get_qt_access()
+
+
+def run_gccxml(gccxml, input_files, exported_classes, xmldir, force=False):
+    output_files = []
+    for header_file in input_files:
+        class_names = exported_classes.get(header_file, [])
+        if class_names == []:
+            continue
+        xml_file = os.path.join(
+            xmldir,
+            os.path.splitext(os.path.basename(header_file))[0]) + '.xml'
+        output_files.append((header_file, xml_file))
+
+        if newer(header_file, xml_file) or force:
+            command = gccxml % (header_file, xml_file, ','.join(class_names))
+            print command
+            os.system(command)
+            
+    return output_files
+
+# run_gccxml()
+
+
+def xml2sip(header_file, xml_file, sip_file,
+            exported_classes, qt_access, substitutions):
+    parser = GccXmlParser()
+    parser.parse(xml_file)
+
+    print "Handling", header_file
+
+    declarations = []
+    chunks = [head]
+    contents = []
+    skip = ['QwtCPointerData']
+
+    name2key = {}
+    for key, (what, declaration) in parser.elements.iteritems():
+        if (isinstance(declaration, Class)
+            and declaration.name in exported_classes
+            and declaration.name not in skip
+            and declaration.location[0] == header_file
+            and type(declaration) != NestedClass
+            ):
+            name2key[declaration.name] = key
+
+    names = name2key.keys()
+    names.sort()
+    
+    for name in names:
+        what, declaration = parser.elements[name2key[name]]
+        print '..', declaration.name, '..'
+        contents.append(declaration.name)
+        declaration.qtfy(qt_access)
+        chunks.append(declaration.sipify(
+            excluded_bases=[],
+            ))
+
+    if not contents:
+        print "Skipping", header_file
+        return
+    
+    keywords['description'] = sip_spec_for(contents)
+    chunks[0] %= keywords
+    chunks.append(tail)
+
+    text = '\n\n'.join(chunks)
+    for old, new in substitutions:
+        text = text.replace(old, new)
+
+    lines = text.split('\n')
+    for (i, line) in enumerate(lines):
+        target = line[:]
+        if target.startswith('    const') and target.endswith(' const;'):
+            target = target.replace('    const ', '    ', 1)
+            target = target.replace(' const;', ';')
+            if target != line and -1 != text.find(target):
+                lines[i] = line.replace('    const', '    // signature: const')
+
+    text = '\n'.join(lines)
+
+    open(sip_file, 'w').write(text)
+
+# xml2sip()
+
+
+def run_xml2sip(input_files, sipdir,
+                exported_classes, qt_access, substitutions, force=False):
+    output_files = []
+    for header_file, xml_file in input_files:
+        sip_file = os.path.join(
+            sipdir,
+            os.path.splitext(os.path.basename(xml_file))[0]) + '.sip'
+        output_files.append((header_file, xml_file, sip_file))
+
+        if not (newer(xml_file, sip_file) or force):
+            continue
+
+        xml2sip(header_file,
+                xml_file,
+                sip_file,
+                exported_classes[header_file],
+                qt_access[header_file],
+                substitutions)
+        
+    return output_files
+
+# run_xml2sip()
+
+
+def main():
+
+    for pyqwt, sources, qwt, gccxml, substitutions in (
+        ('pyqwt4',
+         'qwt-4.2.0',
+         'qwt4qt3',
+         ('gccxml'
+          ' -I.'
+          ' -I/home/packer/usr/lib/qt3.3/include'
+          ' %s -fxml=%s -fxml-start=%s'),
+         (('QMemArray<double>', 'QwtArrayDouble'),
+          ('QMemArray<int>', 'QwtArrayInt',),
+          ('QMemArray<long int>', 'QwtArrayLong',),
+          ('QMemArray<QwtDoublePoint>', 'QwtArrayQwtDoublePoint'),
+          ('QwtPlotItemList', 'QValueList<QwtPlotItem*>'),
+          )),
+        ('pyqwt5',
+         'qwt-cvs',
+         'qwt5qt3',
+         ('gccxml'
+          ' -I.'
+          ' -I/home/packer/usr/lib/qt3.3/include'
+          ' %s -fxml=%s -fxml-start=%s'),
+         (('QMemArray<double>', 'QwtArrayDouble'),
+          ('QMemArray<int>', 'QwtArrayInt',),
+          ('QMemArray<QwtDoublePoint>', 'QwtArrayQwtDoublePoint'),
+          ('QwtPlotItemList', 'QValueList<QwtPlotItem*>'),
+          )),
+        ('pyqwt5',
+         'qwt-cvs',
+         'qwt5qt4',
+         ('gccxml'
+          ' -I.'
+          ' -I/home/packer/usr/lib/qt4.1/mkspecs/linux-g++'
+          ' -I/home/packer/usr/lib/qt4.1/include'
+          ' -I/home/packer/usr/lib/qt4.1/include/QtCore'
+          ' -I/home/packer/usr/lib/qt4.1/include/QtGui'
+          ' %s -fxml=%s -fxml-start=%s'),
+         (('QwtDoublePoint', 'QPointF'), # typedefs are risky in signals
+          ('QwtDoubleSize', 'QSizeF'),
+          ('QwtDoubleRect', 'QRectF'),
+          ('QwtPolygon', 'QPolygon'),
+          ('QPointFData', 'QwtDoublePointData'),
+          ('QVector<double>', 'QwtArrayDouble'),
+          ('QVector<int>', 'QwtArrayInt'),
+          ('QVector<QPointF>', 'QwtArrayQwtDoublePoint'),
+          ('QwtPlotItemList', 'QList<QwtPlotItem*>'),
+          )),
+        ):
+        # setup directories
+        for d in (os.path.join('xml', qwt),
+                  os.path.join('sip', qwt),
+                  os.path.join('..', pyqwt, 'sip', qwt),
+                  ):
+            if not os.path.exists(d):
+                os.makedirs(d)
+
+        # get qwt header files
+        headers = glob.glob(
+            os.path.join('..', pyqwt, sources, 'include', '*.h'))
+        exported_classes = get_exported_classes(headers, 'QWT_EXPORT')
+        qt_access = get_qt_access(headers)
+    
+        xml_files = run_gccxml(gccxml,
+                               headers,
+                               exported_classes,
+                               os.path.join('xml', qwt),
+                               force=False)
+
+        sip_files = run_xml2sip(xml_files,
+                                os.path.join('sip', qwt),
+                                exported_classes,
+                                qt_access,
+                                substitutions,
+                                force=True)
+
+        fill.main(qwt)
+
+        for sip_file in glob.glob(os.path.join('sip', qwt, '*.sip')):
+            shutil.copyfile(sip_file, os.path.join(
+                '..', pyqwt, 'sip', qwt, os.path.basename(sip_file)))
+
+
+# main()
+
+if __name__ == '__main__':
+    main()
+
+# Local Variables: ***
+# mode: python ***
+# End: ***

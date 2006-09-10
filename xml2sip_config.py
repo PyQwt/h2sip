@@ -3,7 +3,9 @@
 
 # argument types to be skipped
 ARGUMENTS = [
-    'void*'
+    'void*',
+    'const QMap<double,QMemArray<QwtDoublePoint> >&',
+    'const QMap<double,QPolygonF>&',
     ]
 
 # result types to be skipped
@@ -14,6 +16,8 @@ RESULTS = [
     #'QwtPlotMarkerIterator',
     # Qwt4 and Qwt5
     'void*',
+    'QMap<double,QMemArray<QwtDoublePoint> >', # Qt3
+    'QMap<double,QPolygonF>', # Qt4
     ]
 
 QOBJECT = [
@@ -418,8 +422,17 @@ sipCpp->QwtPlotCurve::setData(xArray, yArray);
     {'    QwtPlotItem(QwtPlot*, bool = TRUE);': # Qwt4
      '    QwtPlotItem(QwtPlot* /TransferThis/, bool = TRUE);',
 
-     '    void attach(QwtPlot*);': # Qwt5
+     # Qwt5
+     '    QwtPlotItem(const QwtText& = QwtText((&QString::null), AutoText));':
+     '    QwtPlotItem(const QwtText& = QwtText(QString::null, QwtText::AutoText));',
+     # Qwt5
+     '    QwtPlotItem(const QwtText& = QwtText((&QString((&QString::null))), AutoText));':
+     '    QwtPlotItem(const QwtText& = QwtText(QString::null, QwtText::AutoText));',
+
+     # Qwt5     
+     '    void attach(QwtPlot*);':
      '    void attach(QwtPlot* /TransferThis/);',
+     # Qwt5     
 
      '    void detach();':
      r'''    void detach();

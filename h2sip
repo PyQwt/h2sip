@@ -217,6 +217,8 @@ def main():
           ('QVector<int>', 'QwtArrayInt'),
           ('QVector<QPointF>', 'QwtArrayQwtDoublePoint'),
           ('QwtPlotItemList', 'QList<QwtPlotItem*>'),
+          # FIXME: implement more restrictive replacements. This undoes!!
+          ('QPolygonFData', 'QwtPolygonFData'),
           )),
         ):
         # setup directories

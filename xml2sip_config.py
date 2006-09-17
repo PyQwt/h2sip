@@ -68,6 +68,14 @@ MEMBERS =  {
      '    QwtAbstractSlider(Qt::Orientation, QWidget* /TransferThis/ = 0);',
      },
 
+    'QwtAlphaColorMap':
+    {'    QwtAlphaColorMap(const QColor& = QColor((+Qt::gray)));':
+     '    QwtAlphaColorMap(const QColor& = QColor(Qt::gray));',
+     # Qt4
+     '    QwtAlphaColorMap(const QColor& = QColor(gray));':
+     '    QwtAlphaColorMap(const QColor& = QColor(Qt::gray));',
+     },
+
     'QwtAnalogClock':
     {'    QwtAnalogClock(QWidget* = 0, const char* = 0);':
      '    QwtAnalogClock(QWidget* /TransferThis/ = 0, const char* = 0);',

@@ -385,6 +385,26 @@ sipRes = sipCpp->QwtPlot::setCurveData(a0, xArray, yArray);
      # Qwt4
      '    long closestMarker(int, int, int&) const;':
      '    long closestMarker(int, int, int& /Out/) const;',
+
+     '    virtual void drawItems(QPainter*, const QRect&, const QwtScaleMap*, const QwtPlotPrintFilter&) const;':
+     r'''    virtual void drawItems(QPainter*, const QRect&, SIP_PYTUPLE, const QwtPlotPrintFilter&) const [
+        void (QPainter*, const QRect&, const QwtScaleMap*, const QwtPlotPrintFilter&)];
+%MethodCode
+QwtScaleMap maps[QwtPlot::axisCnt];
+// FIXME: fill in maps
+sipCpp->sipProtectVirt_drawItems(sipSelfWasArg, a0, *a1, maps, *a3);
+%End
+''',
+
+     '    virtual void printCanvas(QPainter*, const QRect&, const QwtScaleMap*, const QwtPlotPrintFilter&) const;':
+     r'''    virtual void printCanvas(QPainter*, const QRect&, SIP_PYTUPLE, const QwtPlotPrintFilter&) const [
+     void (QPainter*, const QRect&, const QwtScaleMap*, const QwtPlotPrintFilter&)];
+%MethodCode
+QwtScaleMap maps[QwtPlot::axisCnt];
+// FIXME: fill in maps
+sipCpp->sipProtectVirt_printCanvas(sipSelfWasArg, a0, *a1, maps, *a3);
+%End
+''',
      },
 
     'QwtPlotCanvas':
@@ -419,6 +439,9 @@ sipCpp->QwtPlotCurve::setData(xArray, yArray);
 
      '    int verifyRange(int&, int&) const;':
      '    int verifyRange(int& /In,Out/, int& /In,Out/) const;',
+
+     '    void setCurveFitter(QwtCurveFitter*);':
+     '    void setCurveFitter(QwtCurveFitter* /Transfer/);',
      },
 
     'QwtPlotGrid':
@@ -903,6 +926,17 @@ EXTRA = {
     Py_END_ALLOW_THREADS
 %End // %ConvertToSubClassCode
 %End // HAS_QWT5
+''',
+
+    'QwtScaleMap':
+    r'''
+public:
+    QwtScaleMap(int, int, double, double);
+%MethodCode
+sipCpp = new QwtScaleMap();
+sipCpp->setPaintInterval(a0, a1);
+sipCpp->setScaleInterval(a2, a3);
+%End
 ''',
 
     'QwtSlider':

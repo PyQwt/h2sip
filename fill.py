@@ -88,7 +88,7 @@ public:
     void __setitem__(SIP_PYSLICE, const %(ARRAY)s &);
 %%MethodCode
     int len = sipCpp -> size();
-    int start, stop, step, slicelength;
+    Py_ssize_t start, stop, step, slicelength;
 
     if (0 > sipConvertFromSliceObject(a0, len,
                                       &start, &stop, &step, &slicelength))
@@ -103,7 +103,7 @@ public:
             %(ARRAY)s::ConstIterator it = a1 -> begin();
 
             for (int i = 0; i < slicelength; ++i) {
-                (*sipCpp)[start] = *it;
+                (*sipCpp)[int(start)] = *it;
                 start += step;
                 ++it;
             }
@@ -182,7 +182,7 @@ public:
     void __setitem__(SIP_PYSLICE, const %(ARRAY)s &);
 %%MethodCode
     int len = sipCpp -> size();
-    int start, stop, step, slicelength;
+    Py_ssize_t start, stop, step, slicelength;
 
     if (0 > sipConvertFromSliceObject(a0, len,
                                       &start, &stop, &step, &slicelength))
@@ -197,7 +197,7 @@ public:
             %(ARRAY)s::ConstIterator it = a1 -> begin();
 
             for (int i = 0; i < slicelength; ++i) {
-                (*sipCpp)[start] = *it;
+                (*sipCpp)[int(start)] = *it;
                 start += step;
                 ++it;
             }
@@ -301,7 +301,7 @@ public:
     void __setitem__(SIP_PYSLICE, const %(ARRAY)s &);
 %%MethodCode
     int len = sipCpp -> size();
-    int start, stop, step, slicelength;
+    Py_ssize_t start, stop, step, slicelength;
 
     if (0 > sipConvertFromSliceObject(a0, len,
                                       &start, &stop, &step, &slicelength))
@@ -316,7 +316,7 @@ public:
             %(ARRAY)s::ConstIterator it = a1 -> begin();
 
             for (int i = 0; i < slicelength; ++i) {
-                (*sipCpp)[start] = *it;
+                (*sipCpp)[int(start)] = *it;
                 start += step;
                 ++it;
             }
@@ -406,7 +406,7 @@ public:
     void __setitem__(SIP_PYSLICE, const %(ARRAY)s &);
 %%MethodCode
     int len = sipCpp -> size();
-    int start, stop, step, slicelength;
+    Py_ssize_t start, stop, step, slicelength;
 
     if (0 > sipConvertFromSliceObject(a0, len,
                                       &start, &stop, &step, &slicelength))
@@ -421,7 +421,7 @@ public:
             %(ARRAY)s::ConstIterator it = a1 -> begin();
 
             for (int i = 0; i < slicelength; ++i) {
-                (*sipCpp)[start] = *it;
+                (*sipCpp)[int(start)] = *it;
                 start += step;
                 ++it;
             }

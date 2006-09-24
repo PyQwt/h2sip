@@ -5,7 +5,11 @@ import pprint
 
 from copy import deepcopy
 
-from cElementTree import *
+try:
+    from xml.etree.ElementTree import ElementTree
+except ImportError:
+    from cElementTree import ElementTree
+
 from declaration import *
 
 #------------------------------------------------------------------------------

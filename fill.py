@@ -499,6 +499,9 @@ def main(qwt):
         print >> file, QWT_ARRAY_USER[qwt] % {
             'HEAD': ('\n#include <qwt_array.h>'
                      '\n#include <qpoint.h>'
+                     '\n#if defined(_MSC_VER) && defined(QT_DLL)'
+                     '\ntemplate class __declspec(dllimport) QVector<QPointF>;'
+                     '\n#endif'
                      '\ntypedef QwtArray<QPointF>'
                      ' QwtArrayQwtDoublePoint;'
                      ),

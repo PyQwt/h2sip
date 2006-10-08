@@ -203,10 +203,10 @@ def main():
          'qwt5qt4',
          ('gccxml'
           ' -I.'
-          ' -I/home/packer/usr/lib/qt4.1/mkspecs/linux-g++'
-          ' -I/home/packer/usr/lib/qt4.1/include'
-          ' -I/home/packer/usr/lib/qt4.1/include/QtCore'
-          ' -I/home/packer/usr/lib/qt4.1/include/QtGui'
+          ' -I/home/packer/usr/lib/qt4.2/mkspecs/linux-g++'
+          ' -I/home/packer/usr/lib/qt4.2/include'
+          ' -I/home/packer/usr/lib/qt4.2/include/QtCore'
+          ' -I/home/packer/usr/lib/qt4.2/include/QtGui'
           ' %s -fxml=%s -fxml-start=%s'),
          (('QwtDoublePoint', 'QPointF'), # typedefs are risky in signals
           ('QwtDoubleSize', 'QSizeF'),

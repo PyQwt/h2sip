@@ -31,13 +31,16 @@ QOBJECT = [
     '    static bool qt_static_property(QObject*, int, int, QVariant*);',
     '    static QMetaObject* staticMetaObject();',
     '    QObject* qObject();',
-    # Qt4
+    # Qt4.1
     '    static const QMetaObject staticMetaObject;',
     '    virtual const QMetaObject* metaObject() const;',
     '    // FIXME: virtual void* qt_metacast(const char*);',
     '    virtual int qt_metacall(QMetaObject::Call, int, void**);',
     '    static QString tr(const char*, const char* = 0);',
     '    static QString trUtf8(const char*, const char* = 0);',
+    # Qt4.2
+    '    static QString tr(const char*, const char*, int);',
+    '    static QString trUtf8(const char*, const char*, int);',
     ]
 
 DEFAULTS = {
@@ -652,11 +655,13 @@ Py_END_ALLOW_THREADS
      },
 
     'QwtSlider':
-    {'    QwtSlider(QWidget*, const char* = 0, Qt::Orientation = Qt::Horizontal, QwtSlider::ScalePos = None, QwtSlider::BGSTYLE = BgTrough);':
-     '    QwtSlider(QWidget* /TransferThis/, const char* = 0, Qt::Orientation = Qt::Horizontal, QwtSlider::ScalePos = None, QwtSlider::BGSTYLE = BgTrough);',
+    {'    QwtSlider(QWidget*, const char* = 0, Qt::Orientation = Qt::Horizontal, QwtSlider::ScalePos = NoScale, QwtSlider::BGSTYLE = BgTrough);':
+     '    QwtSlider(QWidget* /TransferThis/, const char* = 0, Qt::Orientation = Qt::Horizontal, QwtSlider::ScalePos = NoScale, QwtSlider::BGSTYLE = BgTrough);',
+     '    QwtSlider(QWidget*, const char*);':
+     '    QwtSlider(QWidget* /TransferThis/, const char*);',
      
-     '    QwtSlider(QWidget*, Qt::Orientation = Qt::Horizontal, QwtSlider::ScalePos = None, QwtSlider::BGSTYLE = BgTrough);':
-     '    QwtSlider(QWidget* /TransferThis/, Qt::Orientation = Qt::Horizontal, QwtSlider::ScalePos = None, QwtSlider::BGSTYLE = BgTrough);',
+     '    QwtSlider(QWidget*, Qt::Orientation = Qt::Horizontal, QwtSlider::ScalePos = NoScale, QwtSlider::BGSTYLE = BgTrough);':
+     '    QwtSlider(QWidget* /TransferThis/, Qt::Orientation = Qt::Horizontal, QwtSlider::ScalePos = NoScale, QwtSlider::BGSTYLE = BgTrough);',
           
      '    void setScaleDraw(QwtScaleDraw*);':
      '    void setScaleDraw(QwtScaleDraw* /Transfer/);',

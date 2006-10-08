@@ -502,6 +502,11 @@ sipRes = sipBuildResult(0, "(BBBB)",
 %End
 ''',
      },
+
+    'QwtPlotMagnifier':
+    {'    QwtPlotMagnifier(QwPlotCanvas*);':
+     '    QwtPlotMagnifier(QwPlotCanvas* /TransferThis/);',
+    },
     
     'QwtPlotMarker':
     {'    QwtPlotMarker(QwtPlot*);':
@@ -592,21 +597,21 @@ sipRes = sipBuildResult(0, "(BBBB)",
      },
 
     'QwtScaleDiv':
-    {'    QwtScaleDiv(const QwtDoubleInterval&, QwtTickList*);':
-     r'''    QwtScaleDiv(const QwtDoubleInterval&, QwtTickList, QwtTickList, QwtTickList) [(const QwtDoubleInterval&, QwtTickList*)];
+    {'    QwtScaleDiv(const QwtDoubleInterval&, QwtValueList*);':
+     r'''    QwtScaleDiv(const QwtDoubleInterval&, QwtValueList, QwtValueList, QwtValueList) [(const QwtDoubleInterval&, QwtValueList*)];
 %MethodCode
 Py_BEGIN_ALLOW_THREADS
-QwtTickList ticks[QwtScaleDiv::NTickTypes] = {*a1, *a2, *a3};
+QwtValueList ticks[QwtScaleDiv::NTickTypes] = {*a1, *a2, *a3};
 sipCpp = new QwtScaleDiv(*a0, ticks);
 Py_END_ALLOW_THREADS
 %End
 ''',
      
-     '    QwtScaleDiv(double, double, QwtTickList*);':
-     r'''    QwtScaleDiv(double, double, QwtTickList, QwtTickList, QwtTickList) [(const QwtDoubleInterval&, QwtTickList*)];
+     '    QwtScaleDiv(double, double, QwtValueList*);':
+     r'''    QwtScaleDiv(double, double, QwtValueList, QwtValueList, QwtValueList) [(const QwtDoubleInterval&, QwtValueList*)];
 %MethodCode
 Py_BEGIN_ALLOW_THREADS
-QwtTickList ticks[QwtScaleDiv::NTickTypes] = {*a2, *a3, *a4};
+QwtValueList ticks[QwtScaleDiv::NTickTypes] = {*a2, *a3, *a4};
 sipCpp = new QwtScaleDiv(a0, a1, ticks);
 Py_END_ALLOW_THREADS
 %End

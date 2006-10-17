@@ -665,8 +665,9 @@ Py_END_ALLOW_THREADS
      },
 
     'QwtSlider':
-    {'    QwtSlider(QWidget*, const char* = 0, Qt::Orientation = Qt::Horizontal, QwtSlider::ScalePos = NoScale, QwtSlider::BGSTYLE = BgTrough);':
-     '    QwtSlider(QWidget* /TransferThis/, const char* = 0, Qt::Orientation = Qt::Horizontal, QwtSlider::ScalePos = NoScale, QwtSlider::BGSTYLE = BgTrough);',
+    {'    QwtSlider(QWidget*, const char* = 0, Qt::Orientation = Qt::Horizontal, QwtSlider::ScalePos = None, QwtSlider::BGSTYLE = BgTrough);':
+     '    QwtSlider(QWidget* /TransferThis/, const char* = 0, Qt::Orientation = Qt::Horizontal, QwtSlider::ScalePos = None, QwtSlider::BGSTYLE = BgTrough);',
+     # Qwt5
      '    QwtSlider(QWidget*, const char*);':
      '    QwtSlider(QWidget* /TransferThis/, const char*);',
      

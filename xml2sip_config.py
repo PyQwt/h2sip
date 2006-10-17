@@ -570,6 +570,11 @@ sipRes = sipBuildResult(0, "(BBBB)",
      '    QwtPushButton(const QIconSet&, const QString&, QWidget* = 0, const char* = 0);':
      '    QwtPushButton(const QIconSet&, const QString&, QWidget* /TransferThis/ = 0, const char* = 0);',
     },
+
+    'QwtRasterData':
+    {'    virtual QwtRasterData* copy() const = 0;':
+     '    virtual QwtRasterData* copy() const = 0 /Factory/;',
+     },
     
     'QwtRichText':
     {'    virtual QwtText* clone() const;':

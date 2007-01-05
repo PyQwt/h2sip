@@ -174,7 +174,7 @@ def main():
 
     for pyqwt, sources, qwt, gccxml, substitutions in (
         ('pyqwt4',
-         'qwt-4.2.0',
+         os.path.join('qwt-4.2.0', 'include'),
          'qwt4qt3',
          ('gccxml'
           ' -I.'
@@ -187,7 +187,7 @@ def main():
           ('QwtPlotItemList', 'QValueList<QwtPlotItem*>'),
           )),
         ('pyqwt5',
-         'qwt-cvs',
+         os.path.join('qwt-svn', 'src'),
          'qwt5qt3',
          ('gccxml'
           ' -I.'
@@ -199,7 +199,7 @@ def main():
           ('QwtPlotItemList', 'QValueList<QwtPlotItem*>'),
           )),
         ('pyqwt5',
-         'qwt-cvs',
+         os.path.join('qwt-svn', 'src'),
          'qwt5qt4',
          ('gccxml'
           ' -I.'
@@ -231,7 +231,7 @@ def main():
 
         # get qwt header files
         headers = glob.glob(
-            os.path.join('..', pyqwt, sources, 'include', '*.h'))
+            os.path.join('..', pyqwt, sources, '*.h'))
         exported_classes = get_exported_classes(headers, 'QWT_EXPORT')
         qt_access = get_qt_access(headers)
     

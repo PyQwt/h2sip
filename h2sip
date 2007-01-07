@@ -208,11 +208,7 @@ def main():
           ' -I/home/packer/usr/lib/qt4.2/include/QtCore'
           ' -I/home/packer/usr/lib/qt4.2/include/QtGui'
           ' %s -fxml=%s -fxml-start=%s'),
-         (('QwtDoublePoint', 'QPointF'), # typedefs are risky in signals
-          ('QwtDoubleSize', 'QSizeF'),
-          ('QwtDoubleRect', 'QRectF'),
-          ('QwtPolygon', 'QPolygon'),
-          ('QPointFData', 'QwtDoublePointData'),
+         (('QPointFData', 'QwtDoublePointData'),
           ('QVector<double>', 'QwtArrayDouble'),
           ('QVector<int>', 'QwtArrayInt'),
           ('QVector<QPointF>', 'QwtArrayQwtDoublePoint'),

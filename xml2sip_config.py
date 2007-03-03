@@ -643,14 +643,8 @@ Py_END_ALLOW_THREADS
      },
 
     'QwtScaleTransformation':
-    {'    double (*)(double, double, double, double, double, void*) xForm;':
-     '    // FIXME: double (*)(double, double, double, double, double, void*) xForm;',
-
-     '    double (*)(double, double, double, double, double, void*) invXForm;':
-     '    // FIXME: double (*)(double, double, double, double, double, void*) invXForm;',
-
-     '    QwtScaleTransformation(double (*)(double, double, double, double, double, void*), double (*)(double, double, double, double, double, void*));':
-     '    // FIXME: QwtScaleTransformation(double (*)(double, double, double, double, double, void*), double (*)(double, double, double, double, double, void*));',
+    {'    virtual QwtScaleTransformation* copy() const;':
+     '    virtual QwtScaleTransformation* copy() const /Factory/;',
      },
 
     'QwtScaleWidget':

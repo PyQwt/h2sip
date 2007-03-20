@@ -709,65 +709,25 @@ Py_DECREF(xOut);
 Py_DECREF(yOut);
 %End // recalc()
 ''',
+
+     '    void copyValues(int = 1);':
+     '    // Not Pythonic: void copyValues(int = 1);',
+
      # Qwt5
-     '    bool recalc(double*, double*, int, int = 0);':
-     r'''    bool recalc(SIP_PYOBJECT, SIP_PYOBJECT, bool = false);
-%MethodCode
-PyObject *xOut, *yOut;
-double *x = 0;
-double *y = 0;
-int nx, ny;
-
-if (1 != try_Contiguous_1D_PyArray_of_double(a0, &xOut, &x, &nx)) {
-    return 0;
-}
-        
-if (1 != try_Contiguous_1D_PyArray_of_double(a1, &yOut, &y, &ny)) {
-    Py_DECREF(xOut);
-    return 0;
-}
-
-int n = nx < ny ? nx : ny;
-        
-sipRes = sipCpp->QwtSpline::recalc(x, y, n, a2);
-
-Py_DECREF(xOut);
-Py_DECREF(yOut);
-%End // recalc()
+     '    QMemArray<QwtDoublePoint> points() const;':
+     r'''
+%If (Qwt_5_0_1 -)
+    QMemArray<QwtDoublePoint> points() const;
+%End // (Qwt_5_0_1 -)
 ''',
-      
-      '    bool recalc(double*, double*, int, bool = false);':
-      r'''    bool recalc(SIP_PYOBJECT, SIP_PYOBJECT, bool = false);
-%MethodCode
-PyObject *xOut, *yOut;
-double *x = 0;
-double *y = 0;
-int nx, ny;
-
-if (1 != try_Contiguous_1D_PyArray_of_double(a0, &xOut, &x, &nx)) {
-    return 0;
-}
-        
-if (1 != try_Contiguous_1D_PyArray_of_double(a1, &yOut, &y, &ny)) {
-    Py_DECREF(xOut);
-    return 0;
-}
-
-int n = nx < ny ? nx : ny;
-        
-sipRes = sipCpp->QwtSpline::recalc(x, y, n, a2);
-
-Py_DECREF(xOut);
-Py_DECREF(yOut);
-%End // recalc()
+     
+     '    QPolygonF points() const;':
+     r'''
+%If (Qwt_5_0_1 -)
+    QPolygonF points() const;
+%End // (Qwt_5_0_1 -)
 ''',
-      
-      '    void copyValues(bool = true);':
-      '    // Not Pythonic: void copyValues(bool = true);',
-
-      '    void copyValues(int = 1);':
-      '    // Not Pythonic: void copyValues(int = 1);',
-      },
+     },
 
     'QwtText':
     {'    virtual QwtText* clone() const = 0;':

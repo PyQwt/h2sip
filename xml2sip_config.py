@@ -540,6 +540,9 @@ sipRes = sipBuildResult(0, "(BBBB)",
 
      '    QwtPlotPicker(int, int, int, QwtPicker::RubberBand, QwtPicker::DisplayMode, QwtPlotCanvas*);':
      '    QwtPlotPicker(int, int, int, QwtPicker::RubberBand, QwtPicker::DisplayMode, QwtPlotCanvas* /TransferThis/);',
+
+     '    virtual QwtText trackerText(const QwtDoublePoint&) const;':
+     '    virtual QwtText trackerText(const QwtDoublePoint&) const /PyName=trackerTextF/;',
      },
 
     'QwtPlotZoomer':
@@ -822,14 +825,14 @@ EXTRA = {
         sipClass = sipClass_QwtArrayData;
     else
 #endif
-#ifdef sipClass_QwtDoublePointData
-    if (dynamic_cast<const QwtDoublePointData *>(sipCpp))
-        sipClass = sipClass_QwtDoublePointData;
-    else
-#endif
 #ifdef sipClass_QwtData
     if (dynamic_cast<const QwtData *>(sipCpp))
         sipClass = sipClass_QwtData;
+    else
+#endif
+#ifdef sipClass_QwtPolygonFData
+    if (dynamic_cast<const QwtPolygonFData *>(sipCpp))
+        sipClass = sipClass_QwtPolygonFData;
     else
 #endif
         sipClass = 0;

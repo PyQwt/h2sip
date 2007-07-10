@@ -474,10 +474,27 @@ def main(qwt):
             }
         print >> file, tail
 
+    if qwt in ['qwt5qt3', 'qwt5qt4']:
+        file = open(os.path.join(
+            'sip', qwt, 'QwtArrayQwtDoubleInterval.sip'), 'w')
+        keywords['description'] = sip_spec_for(['QwtArrayDoubleInterval'])
+        print >> file, head % keywords
+        print >> file, QWT_ARRAY_USER[qwt] % {
+            'HEAD': ('\n#include <qwt_array.h>'
+                     '\n#include <qwt_double_interval.h>'
+                     '\ntypedef QwtArray<QwtDoubleInterval>'
+                     ' QwtArrayQwtDoubleInterval;'
+                     ),
+            'ITEM': 'QwtDoubleInterval',
+            'ARRAY': 'QwtArrayQwtDoubleInterval',
+            'FORCE': 'QwtDoubleInterval',
+            }
+        print >> file, tail
+
     if qwt in ['qwt4qt3', 'qwt5qt3']:
         file = open(os.path.join(
             'sip', qwt, 'QwtArrayQwtDoublePoint.sip'), 'w')
-        keywords['description'] = sip_spec_for(['QwtArrayDoublePoint'])
+        keywords['description'] = sip_spec_for(['QwtArrayQwtDoublePoint'])
         print >> file, head % keywords
         print >> file, QWT_ARRAY_USER[qwt] % {
             'HEAD': ('\n#include <qwt_array.h>'
@@ -494,7 +511,7 @@ def main(qwt):
     if qwt == 'qwt5qt4':
         file = open(os.path.join(
             'sip', qwt, 'QwtArrayQwtDoublePoint.sip'), 'w')
-        keywords['description'] = sip_spec_for(['QwtArrayDoublePoint'])
+        keywords['description'] = sip_spec_for(['QwtArrayQwtDoublePoint'])
         print >> file, head % keywords
         print >> file, QWT_ARRAY_USER[qwt] % {
             'HEAD': ('\n#include <qwt_array.h>'

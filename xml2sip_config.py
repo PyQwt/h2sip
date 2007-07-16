@@ -836,6 +836,13 @@ EXTRA = {
 %End
 %End
 ''',
+
+    # Extra constructor for QwtIntervalData
+    'QwtIntervalData':
+    r'''
+    QwtIntervalData(const QwtArrayQwtDoubleInterval&, const QwtArrayDouble&);
+    void setData(const QwtArrayQwtDoubleInterval&, const QwtArrayDouble&);
+''',
     
     # ConvertToSubClass code for QwtPickerMachine
     'QwtPickerMachine':

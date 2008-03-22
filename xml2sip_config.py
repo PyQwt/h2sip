@@ -44,14 +44,22 @@ QOBJECT = [
     ]
 
 DEFAULTS = {
-    ' = QBrush(NoBrush)': ' = QBrush(Qt::NoBrush)',
-    ' = QPen(NoPen)': ' = QPen(Qt::NoPen)',
+    ' = Active': ' = QPalette::Active',
+    ' = AutoText': ' = QwtText::AutoText',
     ' = Horizontal': ' = Qt::Horizontal',
     ' = NoButton': ' = Qt::NoButton',
+    ' = QBrush(NoBrush)': ' = QBrush(Qt::NoBrush)',
+    ' = QPen(NoPen)': ' = QPen(Qt::NoPen)',
+    ' = RGB': ' = QwtColorMap::RGB',
+    ' = Rtti_PlotItem': ' = QwtPlotItem::Rtti_PlotItem',
     ' = darkGray': ' = Qt::darkGray',            
     ' = gray': ' = Qt::gray',
     ' = red': ' = Qt::red',
     ' = white': ' = Qt::white',
+    # FIXME: clean up integers
+    ' = 0l': ' = 0',
+    ' = -0x00000000000000001': ' = -1',
+    ' = -0x000000001': ' = -1',
     }
 
 MEMBERS =  { 
@@ -72,7 +80,7 @@ MEMBERS =  {
      },
 
     'QwtAlphaColorMap':
-    {'    QwtAlphaColorMap(const QColor& = QColor((+Qt::gray)));':
+    {'    QwtAlphaColorMap(const QColor& = QColor(((const QColor&)((const QColor*)Qt::gray))));':
      '    QwtAlphaColorMap(const QColor& = QColor(Qt::gray));',
      # Qt4
      '    QwtAlphaColorMap(const QColor& = QColor(gray));':
@@ -457,10 +465,10 @@ sipCpp->QwtPlotCurve::setData(xArray, yArray);
      '    QwtPlotItem(QwtPlot* /TransferThis/, bool = TRUE);',
 
      # Qwt5
-     '    QwtPlotItem(const QwtText& = QwtText((&QString::null), AutoText));':
+     '    QwtPlotItem(const QwtText& = QwtText(((const QString&)(& QString::null)), AutoText));':
      '    QwtPlotItem(const QwtText& = QwtText(QString::null, QwtText::AutoText));',
-     # Qwt5
-     '    QwtPlotItem(const QwtText& = QwtText((&QString((&QString::null))), AutoText));':
+     
+     '    QwtPlotItem(const QwtText& = QwtText(((const QString&)(& QString(((const QString::Null&)(& QString::null))))), AutoText));':
      '    QwtPlotItem(const QwtText& = QwtText(QString::null, QwtText::AutoText));',
 
      # Qwt5     

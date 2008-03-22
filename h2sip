@@ -172,13 +172,14 @@ def run_xml2sip(input_files, sipdir,
 
 def main():
 
-    for pyqwt, sources, qwt, gccxml, substitutions in (
+    for pyqwt, sources, target, mix, gccxml, substitutions in (
         ('pyqwt4',
          os.path.join('qwt-4.2.0', 'include'),
          'qwt4qt3',
+         'qwt4qt3',
          ('gccxml'
           ' -I.'
-          ' -I/home/packer/usr/lib/qt3.3/include'
+          ' -I/usr/qt/3/include'
           ' %s -fxml=%s -fxml-start=%s'),
          (('QMemArray<double>', 'QwtArrayDouble'),
           ('QMemArray<int>', 'QwtArrayInt',),
@@ -189,9 +190,10 @@ def main():
         ('pyqwt5',
          os.path.join('qwt-5.0', 'src'),
          'qwt5qt3',
+         'qwt50qt3',
          ('gccxml'
           ' -I.'
-          ' -I/home/packer/usr/lib/qt3.3/include'
+          ' -I/usr/qt/3/include'
           ' %s -fxml=%s -fxml-start=%s'),
          (('QMemArray<double>', 'QwtArrayDouble'),
           ('QMemArray<int>', 'QwtArrayInt',),
@@ -201,12 +203,43 @@ def main():
         ('pyqwt5',
          os.path.join('qwt-5.0', 'src'),
          'qwt5qt4',
+         'qwt50qt4',
          ('gccxml'
           ' -I.'
-          ' -I/home/packer/usr/lib/qt4.3/mkspecs/linux-g++'
-          ' -I/home/packer/usr/lib/qt4.3/include'
-          ' -I/home/packer/usr/lib/qt4.3/include/QtCore'
-          ' -I/home/packer/usr/lib/qt4.3/include/QtGui'
+          ' -I/usr/include/qt4'
+          ' -I/usr/include/qt4/QtCore'
+          ' -I/usr/include/qt4/QtGui'
+          ' %s -fxml=%s -fxml-start=%s'),
+         (('QPointFData', 'QwtDoublePointData'),
+          ('QVector<double>', 'QwtArrayDouble'),
+          ('QVector<int>', 'QwtArrayInt'),
+          ('QVector<QPointF>', 'QwtArrayQwtDoublePoint'),
+          ('QwtPlotItemList', 'QList<QwtPlotItem*>'),
+          # FIXME: implement more restrictive replacements. This undoes!!
+          ('QPolygonFData', 'QwtPolygonFData'),
+          )),
+        ('pyqwt5',
+         os.path.join('qwt-5.1', 'src'),
+         'qwt5qt3',
+         'qwt51qt3',
+         ('gccxml'
+          ' -I.'
+          ' -I/usr/qt/3/include'
+          ' %s -fxml=%s -fxml-start=%s'),
+         (('QMemArray<double>', 'QwtArrayDouble'),
+          ('QMemArray<int>', 'QwtArrayInt',),
+          ('QMemArray<QwtDoublePoint>', 'QwtArrayQwtDoublePoint'),
+          ('QwtPlotItemList', 'QValueList<QwtPlotItem*>'),
+          )),
+        ('pyqwt5',
+         os.path.join('qwt-5.1', 'src'),
+         'qwt5qt4',
+         'qwt51qt4',
+         ('gccxml'
+          ' -I.'
+          ' -I/usr/include/qt4'
+          ' -I/usr/include/qt4/QtCore'
+          ' -I/usr/include/qt4/QtGui'
           ' %s -fxml=%s -fxml-start=%s'),
          (('QPointFData', 'QwtDoublePointData'),
           ('QVector<double>', 'QwtArrayDouble'),
@@ -218,9 +251,10 @@ def main():
           )),
         ):
         # setup directories
-        for d in (os.path.join('xml', qwt),
-                  os.path.join('sip', qwt),
-                  os.path.join('..', pyqwt, 'sip', qwt),
+        for d in (os.path.join('xml', mix),
+                  os.path.join('sip', mix),
+                  os.path.join('sip', target),
+                  os.path.join('..', pyqwt, 'sip', target),
                   ):
             if not os.path.exists(d):
                 os.makedirs(d)
@@ -234,22 +268,35 @@ def main():
         xml_files = run_gccxml(gccxml,
                                headers,
                                exported_classes,
-                               os.path.join('xml', qwt),
+                               os.path.join('xml', mix),
                                force=False)
 
         sip_files = run_xml2sip(xml_files,
-                                os.path.join('sip', qwt),
+                                os.path.join('sip', mix),
                                 exported_classes,
                                 qt_access,
                                 substitutions,
                                 force=True)
 
-        fill.main(qwt)
+        fill.main(target)
 
-        for sip_file in glob.glob(os.path.join('sip', qwt, '*.sip')):
-            shutil.copyfile(sip_file, os.path.join(
-                '..', pyqwt, 'sip', qwt, os.path.basename(sip_file)))
-
+    for sip_file in glob.glob(os.path.join('sip', 'qwt4qt3', '*.sip')):
+        shutil.copyfile(sip_file, os.path.join(
+            '..', 'pyqwt4', 'sip', 'qwt4qt3', os.path.basename(sip_file)))
+    # FIXME: merge qwt50qt3 and qwt51qt3
+    for sip_file in glob.glob(os.path.join('sip', 'qwt50qt3', '*.sip')):
+        shutil.copyfile(sip_file, os.path.join(
+            '..', 'pyqwt5', 'sip', 'qwt5qt3', os.path.basename(sip_file)))
+    for sip_file in glob.glob(os.path.join('sip', 'qwt5qt3', '*.sip')):
+        shutil.copyfile(sip_file, os.path.join(
+            '..', 'pyqwt5', 'sip', 'qwt5qt3', os.path.basename(sip_file)))
+    # FIXME: merge qwt50qt4 and qwt51qt4
+    for sip_file in glob.glob(os.path.join('sip', 'qwt50qt4', '*.sip')):
+        shutil.copyfile(sip_file, os.path.join(
+            '..', 'pyqwt5', 'sip', 'qwt5qt4', os.path.basename(sip_file)))
+    for sip_file in glob.glob(os.path.join('sip', 'qwt5qt4', '*.sip')):
+        shutil.copyfile(sip_file, os.path.join(
+            '..', 'pyqwt5', 'sip', 'qwt5qt4', os.path.basename(sip_file)))
 
 # main()
 

@@ -46,6 +46,7 @@ QOBJECT = [
 DEFAULTS = {
     ' = Active': ' = QPalette::Active',
     ' = AutoText': ' = QwtText::AutoText',
+    ' = BottomScale': ' = QwtScaleDraw::BottomScale',
     ' = Horizontal': ' = Qt::Horizontal',
     ' = NoButton': ' = Qt::NoButton',
     ' = QBrush(NoBrush)': ' = QBrush(Qt::NoBrush)',
@@ -731,6 +732,11 @@ if (1 != try_PyObject_to_QwtArray(a1, yArray))
 ''',
      },
 
+    'QwtSymbol':
+    {'    virtual QwtSymbol* clone() const;':
+     '    virtual QwtSymbol* clone() const /Factory/;',
+     },
+
     'QwtText':
     {'    virtual QwtText* clone() const = 0;':
      '    virtual QwtText* clone() const = 0 /Factory/;',
@@ -902,10 +908,16 @@ EXTRA = {
     switch (sipCpp->rtti()) {
     case QwtPlotItem::Rtti_PlotItem: sipClass = sipClass_QwtPlotItem; break;
     case QwtPlotItem::Rtti_PlotGrid: sipClass = sipClass_QwtPlotGrid; break; 
+#ifdef HAS_QWT_PLOT_SCALE_ITEM
+    case QwtPlotItem::Rtti_PlotScale: sipClass = sipClass_QwtPlotScaleItem; break; 
+#endif // HAS_QWT_PLOT_SCALE_ITEM 
     case QwtPlotItem::Rtti_PlotMarker: sipClass = sipClass_QwtPlotMarker; break; 
     case QwtPlotItem::Rtti_PlotCurve: sipClass = sipClass_QwtPlotCurve; break;
     // MISSING case QwtPlotItem::Rtti_PlotHistogram: sipClass = sipClass_QwtPlotHistogram; break;
     case QwtPlotItem::Rtti_PlotSpectrogram: sipClass = sipClass_QwtPlotSpectrogram; break;
+#ifdef HAS_QWT_PLOT_SVG_ITEM
+    case QwtPlotItem::Rtti_PlotSVG: sipClass = sipClass_QwtPlotSvgItem; break; 
+#endif // HAS_QWT_PLOT_SVG_ITEM
     default: sipClass = 0;
     }
     Py_END_ALLOW_THREADS

@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 
+import difflib
 import glob
 import os
 import pprint
@@ -284,19 +285,65 @@ def main():
         shutil.copyfile(sip_file, os.path.join(
             '..', 'pyqwt4', 'sip', 'qwt4qt3', os.path.basename(sip_file)))
     # FIXME: merge qwt50qt3 and qwt51qt3
-    for sip_file in glob.glob(os.path.join('sip', 'qwt50qt3', '*.sip')):
-        shutil.copyfile(sip_file, os.path.join(
-            '..', 'pyqwt5', 'sip', 'qwt5qt3', os.path.basename(sip_file)))
-    for sip_file in glob.glob(os.path.join('sip', 'qwt5qt3', '*.sip')):
-        shutil.copyfile(sip_file, os.path.join(
-            '..', 'pyqwt5', 'sip', 'qwt5qt3', os.path.basename(sip_file)))
-    # FIXME: merge qwt50qt4 and qwt51qt4
-    for sip_file in glob.glob(os.path.join('sip', 'qwt50qt4', '*.sip')):
-        shutil.copyfile(sip_file, os.path.join(
-            '..', 'pyqwt5', 'sip', 'qwt5qt4', os.path.basename(sip_file)))
-    for sip_file in glob.glob(os.path.join('sip', 'qwt5qt4', '*.sip')):
-        shutil.copyfile(sip_file, os.path.join(
-            '..', 'pyqwt5', 'sip', 'qwt5qt4', os.path.basename(sip_file)))
+    for timeline, versions, target in (
+        ('Qwt_5_1_0', ('qwt50qt3', 'qwt51qt3'), 'qwt5qt3'),
+        ('Qwt_5_1_0', ('qwt50qt4', 'qwt51qt4'), 'qwt5qt4'),
+        ):
+        sources = set()
+        for version in versions:
+            sources.update(
+                [os.path.basename(source) for source
+                 in glob.glob(os.path.join('sip', version, '*.sip'))])
+    for timeline, versions, target in (
+        ('Qwt_5_1_0', ('qwt50qt3', 'qwt51qt3'), 'qwt5qt3'),
+        ('Qwt_5_1_0', ('qwt50qt4', 'qwt51qt4'), 'qwt5qt4'),
+        ):
+        for source in sources:
+            texts = []
+            for version in versions:
+                try:
+                    texts.append(
+                        open(os.path.join('sip', version, source)).read())
+                except IOError:
+                    texts.append(None)
+            if texts[0] is None:
+                open(os.path.join(
+                    'sip', target, source), 'w').write(texts[1])
+            elif texts[1] is None:
+                open(os.path.join(
+                    'sip', target, source), 'w').write(texts[0])
+            elif texts[0] == texts[1]:
+                open(os.path.join(
+                    'sip', target, source), 'w').write(texts[0])
+            else:
+                lines = []
+                last = ' '
+                for line in difflib.Differ().compare(texts[0].splitlines(1),
+                                                     texts[1].splitlines(1)):
+                    if line[0] == ' ':
+                        if last == '+':
+                            lines.append('%%End // (%s -)\n' % timeline) 
+                        elif last == '-':
+                            lines.append('%%End // (- %s)\n' % timeline)
+                        lines.append(line[2:])
+                        last = ' '
+                    elif line[0] == '+':
+                        if last == '-':
+                            lines.append('%%End // (- %s)\n' % timeline)
+                        if last != '+': 
+                            lines.append('%%If (%s -)\n' % timeline)
+                        lines.append(line[2:])
+                        last = '+'
+                    elif line[0] == '-':
+                        if last == '+':
+                            lines.append('%%End // (%s -)\n' % timeline)
+                        if last != '-':
+                            lines.append('%%If (- %s)\n' % timeline)
+                        lines.append(line[2:])
+                        last = '-'
+                open(os.path.join('sip', target, source), 'w').writelines(lines)
+        for sip_file in glob.glob(os.path.join('sip', target, '*.sip')):
+           shutil.copyfile(sip_file, os.path.join('..', 'pyqwt5', sip_file))
 
 # main()
 

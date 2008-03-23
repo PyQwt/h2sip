@@ -86,63 +86,65 @@ def run_gccxml(gccxml, input_files, exported_classes, xmldir, force=False):
 
 
 def xml2sip(header_file, xml_file, sip_file,
-            exported_classes, qt_access, substitutions):
-    parser = GccXmlParser()
-    parser.parse(xml_file)
+            exported_classes, qt_access, substitutions, force=False):
+    if newer(xml_file, sip_file) or force:
+        parser = GccXmlParser()
+        parser.parse(xml_file)
 
-    print "Handling", header_file
+        print "Handling", header_file
 
-    declarations = []
-    chunks = [head]
-    contents = []
-    skip = ['QwtCPointerData']
+        declarations = []
+        chunks = [head]
+        contents = []
+        skip = ['QwtCPointerData']
 
-    name2key = {}
-    for key, (what, declaration) in parser.elements.iteritems():
-        if (isinstance(declaration, Class)
-            and declaration.name in exported_classes
-            and declaration.name not in skip
-            and declaration.location[0] == header_file
-            and type(declaration) != NestedClass
-            ):
-            name2key[declaration.name] = key
+        name2key = {}
+        for key, (what, declaration) in parser.elements.iteritems():
+            if (isinstance(declaration, Class)
+                and declaration.name in exported_classes
+                and declaration.name not in skip
+                and declaration.location[0] == header_file
+                and type(declaration) != NestedClass
+                ):
+                name2key[declaration.name] = key
 
-    names = name2key.keys()
-    names.sort()
-    
-    for name in names:
-        what, declaration = parser.elements[name2key[name]]
-        print '..', declaration.name, '..'
-        contents.append(declaration.name)
-        declaration.qtfy(qt_access)
-        chunks.append(declaration.sipify(
-            excluded_bases=[],
-            ))
+        names = name2key.keys()
+        names.sort()
 
-    if not contents:
-        print "Skipping", header_file
-        return
-    
-    keywords['description'] = sip_spec_for(contents)
-    chunks[0] %= keywords
-    chunks.append(tail)
+        for name in names:
+            what, declaration = parser.elements[name2key[name]]
+            print '..', declaration.name, '..'
+            contents.append(declaration.name)
+            declaration.qtfy(qt_access)
+            chunks.append(declaration.sipify(
+                excluded_bases=[],
+                ))
 
-    text = '\n\n'.join(chunks)
-    for old, new in substitutions:
-        text = text.replace(old, new)
+        if not contents:
+            print "Skipping", header_file
+            return
 
-    lines = text.split('\n')
-    for (i, line) in enumerate(lines):
-        target = line[:]
-        if target.startswith('    const') and target.endswith(' const;'):
-            target = target.replace('    const ', '    ', 1)
-            target = target.replace(' const;', ';')
-            if target != line and -1 != text.find(target):
-                lines[i] = line.replace('    const', '    // signature: const')
+        keywords['description'] = sip_spec_for(contents)
+        chunks[0] %= keywords
+        chunks.append(tail)
 
-    text = '\n'.join(lines)
+        text = '\n\n'.join(chunks)
+        for old, new in substitutions:
+            text = text.replace(old, new)
 
-    open(sip_file, 'w').write(text)
+        lines = text.split('\n')
+        for (i, line) in enumerate(lines):
+            target = line[:]
+            if target.startswith('    const') and target.endswith(' const;'):
+                target = target.replace('    const ', '    ', 1)
+                target = target.replace(' const;', ';')
+                if target != line and -1 != text.find(target):
+                    lines[i] = line.replace(
+                        '    const', '    // signature: const')
+
+        text = '\n'.join(lines)
+
+        open(sip_file, 'w').write(text)
 
 # xml2sip()
 
@@ -171,179 +173,218 @@ def run_xml2sip(input_files, sipdir,
 # run_xml2sip()
 
 
-def main():
+def run_h2sip(pyqwt, sources, mix, gccxml, substitutions, force=False):
+    for d in (os.path.join('xml', mix), os.path.join('sip', mix)):
+        if not os.path.exists(d):
+            os.makedirs(d)
+    headers = glob.glob(os.path.join(os.pardir, pyqwt, sources))
+    exported_classes = get_exported_classes(headers, 'QWT_EXPORT')
+    qt_access = get_qt_access(headers)
+    xml_files = run_gccxml(gccxml,
+                           headers,
+                           exported_classes,
+                           os.path.join('xml', mix),
+                           force)
+    sip_files = run_xml2sip(xml_files,
+                            os.path.join('sip', mix),
+                            exported_classes,
+                            qt_access,
+                            substitutions,
+                            force)
 
-    for pyqwt, sources, target, mix, gccxml, substitutions in (
-        ('pyqwt4',
-         os.path.join('qwt-4.2.0', 'include'),
-         'qwt4qt3',
-         'qwt4qt3',
-         ('gccxml'
-          ' -I.'
-          ' -I/usr/qt/3/include'
-          ' %s -fxml=%s -fxml-start=%s'),
-         (('QMemArray<double>', 'QwtArrayDouble'),
-          ('QMemArray<int>', 'QwtArrayInt',),
-          ('QMemArray<long int>', 'QwtArrayLong',),
-          ('QMemArray<QwtDoublePoint>', 'QwtArrayQwtDoublePoint'),
-          ('QwtPlotItemList', 'QValueList<QwtPlotItem*>'),
-          )),
-        ('pyqwt5',
-         os.path.join('qwt-5.0', 'src'),
-         'qwt5qt3',
-         'qwt50qt3',
-         ('gccxml'
-          ' -I.'
-          ' -I/usr/qt/3/include'
-          ' %s -fxml=%s -fxml-start=%s'),
-         (('QMemArray<double>', 'QwtArrayDouble'),
-          ('QMemArray<int>', 'QwtArrayInt',),
-          ('QMemArray<QwtDoublePoint>', 'QwtArrayQwtDoublePoint'),
-          ('QwtPlotItemList', 'QValueList<QwtPlotItem*>'),
-          )),
-        ('pyqwt5',
-         os.path.join('qwt-5.0', 'src'),
-         'qwt5qt4',
-         'qwt50qt4',
-         ('gccxml'
-          ' -I.'
-          ' -I/usr/include/qt4'
-          ' -I/usr/include/qt4/QtCore'
-          ' -I/usr/include/qt4/QtGui'
-          ' %s -fxml=%s -fxml-start=%s'),
-         (('QPointFData', 'QwtDoublePointData'),
-          ('QVector<double>', 'QwtArrayDouble'),
-          ('QVector<int>', 'QwtArrayInt'),
-          ('QVector<QPointF>', 'QwtArrayQwtDoublePoint'),
-          ('QwtPlotItemList', 'QList<QwtPlotItem*>'),
-          # FIXME: implement more restrictive replacements. This undoes!!
-          ('QPolygonFData', 'QwtPolygonFData'),
-          )),
-        ('pyqwt5',
-         os.path.join('qwt-5.1', 'src'),
-         'qwt5qt3',
-         'qwt51qt3',
-         ('gccxml'
-          ' -I.'
-          ' -I/usr/qt/3/include'
-          ' %s -fxml=%s -fxml-start=%s'),
-         (('QMemArray<double>', 'QwtArrayDouble'),
-          ('QMemArray<int>', 'QwtArrayInt',),
-          ('QMemArray<QwtDoublePoint>', 'QwtArrayQwtDoublePoint'),
-          ('QwtPlotItemList', 'QValueList<QwtPlotItem*>'),
-          )),
-        ('pyqwt5',
-         os.path.join('qwt-5.1', 'src'),
-         'qwt5qt4',
-         'qwt51qt4',
-         ('gccxml'
-          ' -I.'
-          ' -I/usr/include/qt4'
-          ' -I/usr/include/qt4/QtCore'
-          ' -I/usr/include/qt4/QtGui'
-          ' %s -fxml=%s -fxml-start=%s'),
-         (('QPointFData', 'QwtDoublePointData'),
-          ('QVector<double>', 'QwtArrayDouble'),
-          ('QVector<int>', 'QwtArrayInt'),
-          ('QVector<QPointF>', 'QwtArrayQwtDoublePoint'),
-          ('QwtPlotItemList', 'QList<QwtPlotItem*>'),
-          # FIXME: implement more restrictive replacements. This undoes!!
-          ('QPolygonFData', 'QwtPolygonFData'),
-          )),
+# def run_h2sip()
+
+
+def merge(texts, source):
+    pairs = []
+    versions = sorted(texts.keys())
+    for (v0, v1) in zip(versions[:-1], versions[1:]):
+        t0 = texts[v0]
+        t1 = texts[v1]
+        if t0 is not None and t1 is not None and t0 != t1:
+            pairs.append((v0, v1))
+    if not pairs:
+        for text in texts.itervalues():
+            if text is not None:
+                return text
+    else:
+        print source, pairs
+        return None
+
+# merge()
+
+
+def main():
+    force = False
+    run_h2sip('pyqwt4',
+              os.path.join('qwt-4.2.0', 'include', '*.h'),
+              '4.2.0-3.3.8',
+              ('gccxml'
+               ' -I.'
+               ' -I/usr/qt/3/include'
+               ' %s -fxml=%s -fxml-start=%s'),
+              (('QMemArray<double>', 'QwtArrayDouble'),
+               ('QMemArray<int>', 'QwtArrayInt',),
+               ('QMemArray<long int>', 'QwtArrayLong',),
+               ('QMemArray<QwtDoublePoint>', 'QwtArrayQwtDoublePoint'),
+               ('QwtPlotItemList', 'QValueList<QwtPlotItem*>'),
+               ),
+              force)
+ 
+    for sources, mix in (
+        (os.path.join('qwt-5.0.0', 'src', '*.h'), '5.0.0-3.3.8'),
+        (os.path.join('qwt-5.0.1', 'src', '*.h'), '5.0.1-3.3.8'),
+        (os.path.join('qwt-5.0.2', 'src', '*.h'), '5.0.2-3.3.8'),
+        (os.path.join('qwt-5.0', 'src', '*.h'), '5.0.3-3.3.8'),
+        (os.path.join('qwt-5.1', 'src', '*.h'), '5.1.0-3.3.8'),
         ):
-        # setup directories
-        for d in (os.path.join('xml', mix),
-                  os.path.join('sip', mix),
-                  os.path.join('sip', target),
-                  os.path.join('..', pyqwt, 'sip', target),
-                  ):
+        run_h2sip('pyqwt5',
+                  sources,
+                  mix,
+                  ('gccxml'
+                   ' -I.'
+                   ' -I/usr/qt/3/include'
+                   ' %s -fxml=%s -fxml-start=%s'),
+                  (('QMemArray<double>', 'QwtArrayDouble'),
+                   ('QMemArray<int>', 'QwtArrayInt',),
+                   ('QMemArray<QwtDoublePoint>', 'QwtArrayQwtDoublePoint'),
+                   ('QwtPlotItemList', 'QValueList<QwtPlotItem*>'),
+                   ),
+                  force)
+
+    for sources, mix in (
+        (os.path.join('qwt-5.0.0', 'src', '*.h'), '5.0.0-4.3.4'),
+        (os.path.join('qwt-5.0.1', 'src', '*.h'), '5.0.1-4.3.4'),
+        (os.path.join('qwt-5.0.2', 'src', '*.h'), '5.0.2-4.3.4'),
+        (os.path.join('qwt-5.0', 'src', '*.h'), '5.0.3-4.3.4'),
+        (os.path.join('qwt-5.1', 'src', '*.h'), '5.1.0-4.3.4'),
+        ):
+        run_h2sip('pyqwt5',
+                  sources,
+                  mix,
+                  ('gccxml'
+                   ' -I.'
+                   ' -I/usr/include/qt4'
+                   ' -I/usr/include/qt4/QtCore'
+                   ' -I/usr/include/qt4/QtGui'
+                   ' %s -fxml=%s -fxml-start=%s'),
+                  (('QPointFData', 'QwtDoublePointData'),
+                   ('QVector<double>', 'QwtArrayDouble'),
+                   ('QVector<int>', 'QwtArrayInt'),
+                   ('QVector<QPointF>', 'QwtArrayQwtDoublePoint'),
+                   ('QwtPlotItemList', 'QList<QwtPlotItem*>'),
+                   # FIXME: implement more restrictive replacements.
+                   # This undoes replacements which are too greedy!!
+                   ('QPolygonFData', 'QwtPolygonFData'),
+                   ),
+                  force)
+
+
+    for pyqwt, target in (('pyqwt4', 'qwt4qt3'),
+                          ('pyqwt5', 'qwt5qt3'),
+                          ('pyqwt5', 'qwt5qt4')):
+        for d in (os.path.join('sip', target),
+                  os.path.join(os.pardir, pyqwt, 'sip', target)):
             if not os.path.exists(d):
                 os.makedirs(d)
-
-        # get qwt header files
-        headers = glob.glob(
-            os.path.join('..', pyqwt, sources, '*.h'))
-        exported_classes = get_exported_classes(headers, 'QWT_EXPORT')
-        qt_access = get_qt_access(headers)
-    
-        xml_files = run_gccxml(gccxml,
-                               headers,
-                               exported_classes,
-                               os.path.join('xml', mix),
-                               force=False)
-
-        sip_files = run_xml2sip(xml_files,
-                                os.path.join('sip', mix),
-                                exported_classes,
-                                qt_access,
-                                substitutions,
-                                force=True)
-
         fill.main(target)
 
-    for sip_file in glob.glob(os.path.join('sip', 'qwt4qt3', '*.sip')):
+    for sip_file in glob.glob(os.path.join('sip', '4.2.0-3.3.8', '*.sip')):
         shutil.copyfile(sip_file, os.path.join(
             '..', 'pyqwt4', 'sip', 'qwt4qt3', os.path.basename(sip_file)))
-    # FIXME: merge qwt50qt3 and qwt51qt3
-    for timeline, versions, target in (
-        ('Qwt_5_1_0', ('qwt50qt3', 'qwt51qt3'), 'qwt5qt3'),
-        ('Qwt_5_1_0', ('qwt50qt4', 'qwt51qt4'), 'qwt5qt4'),
-        ):
+
+    jobs = {'qwt5qt3': {'Qwt_5_0_0': '5.0.0-3.3.8',
+                        'Qwt_5_0_1': '5.0.1-3.3.8',
+                        'Qwt_5_0_2': '5.0.2-3.3.8',
+                        'Qwt_5_0_3': '5.0.3-3.3.8',
+                        'Qwt_5_1_0': '5.1.0-3.3.8',
+                        },
+            'qwt5qt4': {'Qwt_5_0_0': '5.0.0-4.3.4',
+                        'Qwt_5_0_1': '5.0.1-4.3.4',
+                        'Qwt_5_0_2': '5.0.2-4.3.4',
+                        'Qwt_5_0_3': '5.0.3-4.3.4',
+                        'Qwt_5_1_0': '5.1.0-4.3.4',
+                        },
+            }
+    for target, versions in jobs.iteritems():
         sources = set()
-        for version in versions:
-            sources.update(
-                [os.path.basename(source) for source
-                 in glob.glob(os.path.join('sip', version, '*.sip'))])
-    for timeline, versions, target in (
-        ('Qwt_5_1_0', ('qwt50qt3', 'qwt51qt3'), 'qwt5qt3'),
-        ('Qwt_5_1_0', ('qwt50qt4', 'qwt51qt4'), 'qwt5qt4'),
-        ):
+        for directory in versions.itervalues():
+            sources.update([os.path.basename(source) for source
+                            in glob.glob(os.path.join('sip', mix, '*.sip'))])
+        pprint.pprint(sources)
         for source in sources:
-            texts = []
-            for version in versions:
+            texts = {}
+            for timeline, directory in versions.iteritems():
                 try:
-                    texts.append(
-                        open(os.path.join('sip', version, source)).read())
+                    text = open(os.path.join('sip', directory, source)).read()
                 except IOError:
-                    texts.append(None)
-            if texts[0] is None:
-                open(os.path.join(
-                    'sip', target, source), 'w').write(texts[1])
-            elif texts[1] is None:
-                open(os.path.join(
-                    'sip', target, source), 'w').write(texts[0])
-            elif texts[0] == texts[1]:
-                open(os.path.join(
-                    'sip', target, source), 'w').write(texts[0])
-            else:
-                lines = []
-                last = ' '
-                for line in difflib.Differ().compare(texts[0].splitlines(1),
-                                                     texts[1].splitlines(1)):
-                    if line[0] == ' ':
-                        if last == '+':
-                            lines.append('%%End // (%s -)\n' % timeline) 
-                        elif last == '-':
-                            lines.append('%%End // (- %s)\n' % timeline)
-                        lines.append(line[2:])
-                        last = ' '
-                    elif line[0] == '+':
-                        if last == '-':
-                            lines.append('%%End // (- %s)\n' % timeline)
-                        if last != '+': 
-                            lines.append('%%If (%s -)\n' % timeline)
-                        lines.append(line[2:])
-                        last = '+'
-                    elif line[0] == '-':
-                        if last == '+':
-                            lines.append('%%End // (%s -)\n' % timeline)
-                        if last != '-':
-                            lines.append('%%If (- %s)\n' % timeline)
-                        lines.append(line[2:])
-                        last = '-'
-                open(os.path.join('sip', target, source), 'w').writelines(lines)
+                    text = None
+                texts[timeline] = text
+            text = merge(texts, source)
+            if isinstance(text, str):
+                open(os.path.join('sip', target, source), 'w').write(text)
         for sip_file in glob.glob(os.path.join('sip', target, '*.sip')):
-           shutil.copyfile(sip_file, os.path.join('..', 'pyqwt5', sip_file))
+            shutil.copyfile(sip_file, os.path.join('..', 'pyqwt5', sip_file))
+            
+                                
+    # FIXME: merge qwt50qt3 and qwt51qt3
+##     for timeline, versions, target in (
+##         ('Qwt_5_1_0', ('qwt50qt3', 'qwt51qt3'), 'qwt5qt3'),
+##         ('Qwt_5_1_0', ('qwt50qt4', 'qwt51qt4'), 'qwt5qt4'),
+##         ):
+##         sources = set()
+##         for version in versions:
+##             sources.update(
+##                 [os.path.basename(source) for source
+##                  in glob.glob(os.path.join('sip', version, '*.sip'))])
+##     for timeline, versions, target in (
+##         ('Qwt_5_1_0', ('qwt50qt3', 'qwt51qt3'), 'qwt5qt3'),
+##         ('Qwt_5_1_0', ('qwt50qt4', 'qwt51qt4'), 'qwt5qt4'),
+##         ):
+##         for source in sources:
+##             texts = []
+##             for version in versions:
+##                 try:
+##                     texts.append(
+##                         open(os.path.join('sip', version, source)).read())
+##                 except IOError:
+##                     texts.append(None)
+##             if texts[0] is None:
+##                 open(os.path.join(
+##                     'sip', target, source), 'w').write(texts[1])
+##             elif texts[1] is None:
+##                 open(os.path.join(
+##                     'sip', target, source), 'w').write(texts[0])
+##             elif texts[0] == texts[1]:
+##                 open(os.path.join(
+##                     'sip', target, source), 'w').write(texts[0])
+##             else:
+##                 lines = []
+##                 last = ' '
+##                 for line in difflib.Differ().compare(texts[0].splitlines(1),
+##                                                      texts[1].splitlines(1)):
+##                     if line[0] == ' ':
+##                         if last == '+':
+##                             lines.append('%%End // (%s -)\n' % timeline) 
+##                         elif last == '-':
+##                             lines.append('%%End // (- %s)\n' % timeline)
+##                         lines.append(line[2:])
+##                         last = ' '
+##                     elif line[0] == '+':
+##                         if last == '-':
+##                             lines.append('%%End // (- %s)\n' % timeline)
+##                         if last != '+': 
+##                             lines.append('%%If (%s -)\n' % timeline)
+##                         lines.append(line[2:])
+##                         last = '+'
+##                     elif line[0] == '-':
+##                         if last == '+':
+##                             lines.append('%%End // (%s -)\n' % timeline)
+##                         if last != '-':
+##                             lines.append('%%If (- %s)\n' % timeline)
+##                         lines.append(line[2:])
+##                         last = '-'
+##                 open(os.path.join('sip', target, source), 'w').writelines(lines)
 
 # main()
 

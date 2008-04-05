@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 
+import cStringIO
 import difflib
 import glob
 import os
@@ -208,8 +209,40 @@ def merge(texts, source):
             if text is not None:
                 return text
     else:
-        print source, pairs
-        return None
+        lines = texts[versions[0]].splitlines(1)
+        times = [('', '') for line in lines]
+        for version in versions[1:]:
+            newlines = []
+            newtimes = []
+            for line in difflib.Differ().compare(lines,
+                                                 texts[version].splitlines(1)):
+                if line[0] == ' ':
+                    newlines.append(line[2:])
+                    newtimes.append(times.pop(0))
+                if line[0] == '+':
+                    newlines.append(line[2:])
+                    newtimes.append((version, ''))
+                if line[0] == '-':
+                    newlines.append(line[2:])
+                    if times[0][1] == '':
+                        newtimes.append((times.pop(0)[0], version))
+                    else:
+                        newtimes.append(times.pop(0))
+            lines = newlines
+            times = newtimes
+        last = ('', '')
+        io = cStringIO.StringIO()        
+        for pair, line in zip(times, lines):
+            if pair == last:
+                io.write(line)
+            else:
+                if last != ('', ''):
+                    io.write('%%End // (%s - %s)\n' % last)
+                if pair != ('', ''):
+                    io.write('%%If (%s - %s)\n' % pair)
+                io.write(line)
+                last = pair
+        return io.getvalue(True)
 
 # merge()
 
@@ -325,66 +358,6 @@ def main():
                 open(os.path.join('sip', target, source), 'w').write(text)
         for sip_file in glob.glob(os.path.join('sip', target, '*.sip')):
             shutil.copyfile(sip_file, os.path.join('..', 'pyqwt5', sip_file))
-            
-                                
-    # FIXME: merge qwt50qt3 and qwt51qt3
-##     for timeline, versions, target in (
-##         ('Qwt_5_1_0', ('qwt50qt3', 'qwt51qt3'), 'qwt5qt3'),
-##         ('Qwt_5_1_0', ('qwt50qt4', 'qwt51qt4'), 'qwt5qt4'),
-##         ):
-##         sources = set()
-##         for version in versions:
-##             sources.update(
-##                 [os.path.basename(source) for source
-##                  in glob.glob(os.path.join('sip', version, '*.sip'))])
-##     for timeline, versions, target in (
-##         ('Qwt_5_1_0', ('qwt50qt3', 'qwt51qt3'), 'qwt5qt3'),
-##         ('Qwt_5_1_0', ('qwt50qt4', 'qwt51qt4'), 'qwt5qt4'),
-##         ):
-##         for source in sources:
-##             texts = []
-##             for version in versions:
-##                 try:
-##                     texts.append(
-##                         open(os.path.join('sip', version, source)).read())
-##                 except IOError:
-##                     texts.append(None)
-##             if texts[0] is None:
-##                 open(os.path.join(
-##                     'sip', target, source), 'w').write(texts[1])
-##             elif texts[1] is None:
-##                 open(os.path.join(
-##                     'sip', target, source), 'w').write(texts[0])
-##             elif texts[0] == texts[1]:
-##                 open(os.path.join(
-##                     'sip', target, source), 'w').write(texts[0])
-##             else:
-##                 lines = []
-##                 last = ' '
-##                 for line in difflib.Differ().compare(texts[0].splitlines(1),
-##                                                      texts[1].splitlines(1)):
-##                     if line[0] == ' ':
-##                         if last == '+':
-##                             lines.append('%%End // (%s -)\n' % timeline) 
-##                         elif last == '-':
-##                             lines.append('%%End // (- %s)\n' % timeline)
-##                         lines.append(line[2:])
-##                         last = ' '
-##                     elif line[0] == '+':
-##                         if last == '-':
-##                             lines.append('%%End // (- %s)\n' % timeline)
-##                         if last != '+': 
-##                             lines.append('%%If (%s -)\n' % timeline)
-##                         lines.append(line[2:])
-##                         last = '+'
-##                     elif line[0] == '-':
-##                         if last == '+':
-##                             lines.append('%%End // (%s -)\n' % timeline)
-##                         if last != '-':
-##                             lines.append('%%If (- %s)\n' % timeline)
-##                         lines.append(line[2:])
-##                         last = '-'
-##                 open(os.path.join('sip', target, source), 'w').writelines(lines)
 
 # main()
 

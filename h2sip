@@ -344,7 +344,6 @@ def main():
         for directory in versions.itervalues():
             sources.update([os.path.basename(source) for source
                             in glob.glob(os.path.join('sip', mix, '*.sip'))])
-        pprint.pprint(sources)
         for source in sources:
             texts = {}
             for timeline, directory in versions.iteritems():

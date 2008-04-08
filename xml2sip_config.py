@@ -328,6 +328,8 @@ sipCpp->QwtCurve::setData(xArray, yArray);
      '    QwtPicker(int, QwtPicker::RubberBand, QwtPicker::DisplayMode, QWidget*);':
      '    QwtPicker(int, QwtPicker::RubberBand, QwtPicker::DisplayMode, QWidget* /TransferThis/);',
 
+     '    virtual QwtPickerMachine* stateMachine(int) const;':
+     '    virtual QwtPickerMachine* stateMachine(int) const /Factory/;',
      },
 
     'QwtPanner':

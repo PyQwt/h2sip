@@ -365,7 +365,7 @@ sipCpp->QwtCurve::setData(xArray, yArray);
      '    void setAxisScaleEngine(int, QwtScaleEngine*);':
      '    void setAxisScaleEngine(int, QwtScaleEngine* /Transfer/);',
 
-     '    void insertLegend(QwtLegend*, QwtPlot::LegendPosition = QwtPlot::RightLegend, double = -1.0e+0);':
+     '    void insertLegend(QwtLegend*, QwtPlot::LegendPosition = RightLegend, double = -1.0e+0);':
      '    void insertLegend(QwtLegend* /Transfer/, QwtPlot::LegendPosition = QwtPlot::RightLegend, double = -1);',
 
      '    void setAxisScaleDraw(int, QwtScaleDraw*);':

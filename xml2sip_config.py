@@ -786,38 +786,51 @@ if (1 != try_PyObject_to_QwtArray(a1, yArray))
 EXTRA = {
     'QwtAbstractSlider':
     r'''
+// python mksccode PyQt4.Qwt5
 %ConvertToSubClassCode
     static struct class_graph {
         char *name;
         sipWrapperType **type;
         int yes, no;
     } graph[] = {
-        {sipName_QwtLegend, &sipClass_QwtLegend, -1, 1},
-        {sipName_QwtCounter, &sipClass_QwtCounter, -1, 2},
-        {sipName_QwtArrowButton, &sipClass_QwtArrowButton, -1, 3},
-        {sipName_QwtTextLabel, &sipClass_QwtTextLabel, 11, 4},
-        {sipName_QwtDynGridLayout, &sipClass_QwtDynGridLayout, -1, 5},
-        {sipName_QwtScaleWidget, &sipClass_QwtScaleWidget, -1, 6},
-        {sipName_QwtThermo, &sipClass_QwtThermo, -1, 7},
-        {sipName_QwtAbstractSlider, &sipClass_QwtAbstractSlider, 12, 8},
-        {sipName_QwtPlot, &sipClass_QwtPlot, -1, 9},
-        {sipName_QwtPicker, &sipClass_QwtPicker, 18, 10},
-        {sipName_QwtPlotCanvas, &sipClass_QwtPlotCanvas, -1, -1},
-        {sipName_QwtLegendItem, &sipClass_QwtLegendItem, -1, -1},
-        {sipName_QwtWheel, &sipClass_QwtWheel, -1, 13},
-        {sipName_QwtSlider, &sipClass_QwtSlider, -1, 14},
-        {sipName_QwtKnob, &sipClass_QwtKnob, -1, 15},
-        {sipName_QwtDial, &sipClass_QwtDial, 16, -1},
-        {sipName_QwtAnalogClock, &sipClass_QwtAnalogClock, -1, 17},
+        {sipName_QwtAbstractSlider, &sipClass_QwtAbstractSlider, 13, 1},
+#if QWT_VERSION >= 0x050100
+        {sipName_QwtPanner, &sipClass_QwtPanner, 19, 2},
+#else
+        {0, 0, 19, 2},
+#endif
+        {sipName_QwtDynGridLayout, &sipClass_QwtDynGridLayout, -1, 3},
+        {sipName_QwtCounter, &sipClass_QwtCounter, -1, 4},
+        {sipName_QwtLegend, &sipClass_QwtLegend, -1, 5},
+        {sipName_QwtArrowButton, &sipClass_QwtArrowButton, -1, 6},
+        {sipName_QwtScaleWidget, &sipClass_QwtScaleWidget, -1, 7},
+        {sipName_QwtTextLabel, &sipClass_QwtTextLabel, 20, 8},
+        {sipName_QwtPlotCanvas, &sipClass_QwtPlotCanvas, -1, 9},
+        {sipName_QwtThermo, &sipClass_QwtThermo, -1, 10},
+#if QWT_VERSION >= 0x050100
+        {sipName_QwtMagnifier, &sipClass_QwtMagnifier, 21, 11},
+#else
+        {0, 0, 21, 11},
+#endif
+        {sipName_QwtPlot, &sipClass_QwtPlot, -1, 12},
+        {sipName_QwtPicker, &sipClass_QwtPicker, 22, -1},
+        {sipName_QwtDial, &sipClass_QwtDial, 17, 14},
+        {sipName_QwtSlider, &sipClass_QwtSlider, -1, 15},
+        {sipName_QwtWheel, &sipClass_QwtWheel, -1, 16},
+        {sipName_QwtKnob, &sipClass_QwtKnob, -1, -1},
+        {sipName_QwtAnalogClock, &sipClass_QwtAnalogClock, -1, 18},
         {sipName_QwtCompass, &sipClass_QwtCompass, -1, -1},
-        {sipName_QwtPlotPicker, &sipClass_QwtPlotPicker, 19, -1},
+        {sipName_QwtPlotPanner, &sipClass_QwtPlotPanner, -1, -1},
+        {sipName_QwtLegendItem, &sipClass_QwtLegendItem, -1, -1},
+        {sipName_QwtPlotMagnifier, &sipClass_QwtPlotMagnifier, -1, -1},
+        {sipName_QwtPlotPicker, &sipClass_QwtPlotPicker, 23, -1},
         {sipName_QwtPlotZoomer, &sipClass_QwtPlotZoomer, -1, -1},
     };
     int i = 0;
-    sipClass = 0;
+    sipClass = NULL;
     do {
         struct class_graph *cg = &graph[i];
-        if (cg->name != 0 && sipCpp->inherits(cg->name)) {
+        if (cg->name != NULL && sipCpp->inherits(cg->name)) {
             sipClass = *cg->type;
             i = cg->yes;
         } else {
@@ -944,36 +957,36 @@ sipCpp->setScaleInterval(a2, a3);
 %End
 ''',
 
-    'QwtSlider':
+    'QwtSliderBase':
     r'''
-%If (HAS_QWT4)
+// python mksccode Qwt4
 %ConvertToSubClassCode
     static struct class_graph {
         char *name;
         sipWrapperType **type;
         int yes, no;
     } graph[] = {
-        {sipName_QwtArrowButton, &sipClass_QwtArrowButton, -1, 1},
-        {sipName_QwtLegend, &sipClass_QwtLegend, -1, 2},
-        {sipName_QwtPicker, &sipClass_QwtPicker, 12, 3},
-        {sipName_QwtDynGridLayout, &sipClass_QwtDynGridLayout, -1, 4},
-        {sipName_QwtPlot, &sipClass_QwtPlot, -1, 5},
-        {sipName_QwtThermo, &sipClass_QwtThermo, -1, 6},
-        {sipName_QwtPushButton, &sipClass_QwtPushButton, 14, 7},
-        {sipName_QwtSliderBase, &sipClass_QwtSliderBase, 15, 8},
-        {sipName_QwtPlotCanvas, &sipClass_QwtPlotCanvas, -1, 9},
-        {sipName_QwtScale, &sipClass_QwtScale, -1, 10},
-        {sipName_QwtCounter, &sipClass_QwtCounter, -1, 11},
-        {sipName_QwtLegendLabel, &sipClass_QwtLegendLabel, -1, -1},
-        {sipName_QwtPlotPicker, &sipClass_QwtPlotPicker, 13, -1},
+        {sipName_QwtLegend, &sipClass_QwtLegend, -1, 1},
+        {sipName_QwtArrowButton, &sipClass_QwtArrowButton, -1, 2},
+        {sipName_QwtScale, &sipClass_QwtScale, -1, 3},
+        {sipName_QwtPlot, &sipClass_QwtPlot, -1, 4},
+        {sipName_QwtCounter, &sipClass_QwtCounter, -1, 5},
+        {sipName_QwtDynGridLayout, &sipClass_QwtDynGridLayout, -1, 6},
+        {sipName_QwtPlotCanvas, &sipClass_QwtPlotCanvas, -1, 7},
+        {sipName_QwtThermo, &sipClass_QwtThermo, -1, 8},
+        {sipName_QwtLegendLabel, &sipClass_QwtLegendLabel, -1, 9},
+        {sipName_QwtSliderBase, &sipClass_QwtSliderBase, 12, 10},
+        {sipName_QwtPicker, &sipClass_QwtPicker, 18, 11},
+        {sipName_QwtPushButton, &sipClass_QwtPushButton, 20, -1},
+        {sipName_QwtWheel, &sipClass_QwtWheel, -1, 13},
+        {sipName_QwtKnob, &sipClass_QwtKnob, -1, 14},
+        {sipName_QwtSlider, &sipClass_QwtSlider, -1, 15},
+        {sipName_QwtDial, &sipClass_QwtDial, 16, -1},
+        {sipName_QwtAnalogClock, &sipClass_QwtAnalogClock, -1, 17},
+        {sipName_QwtCompass, &sipClass_QwtCompass, -1, -1},
+        {sipName_QwtPlotPicker, &sipClass_QwtPlotPicker, 19, -1},
         {sipName_QwtPlotZoomer, &sipClass_QwtPlotZoomer, -1, -1},
         {sipName_QwtLegendButton, &sipClass_QwtLegendButton, -1, -1},
-        {sipName_QwtWheel, &sipClass_QwtWheel, -1, 16},
-        {sipName_QwtDial, &sipClass_QwtDial, 19, 17},
-        {sipName_QwtKnob, &sipClass_QwtKnob, -1, 18},
-        {sipName_QwtSlider, &sipClass_QwtSlider, -1, -1},
-        {sipName_QwtAnalogClock, &sipClass_QwtAnalogClock, -1, 20},
-        {sipName_QwtCompass, &sipClass_QwtCompass, -1, -1},
     };
     int i = 0;
     sipClass = NULL;
@@ -986,52 +999,7 @@ sipCpp->setScaleInterval(a2, a3);
             i = cg->no;
         }
     } while (i >= 0);
-%End // %ConvertToSubClassCode
-%End // HAS_QWT4
-
-%If (HAS_QWT5)
-%ConvertToSubClassCode
-    static struct class_graph {
-        char *name;
-        sipWrapperType **type;
-        int yes, no;
-    } graph[] = {
-        {sipName_QwtAbstractSlider, &sipClass_QwtAbstractSlider, 12, 1},
-        {sipName_QwtPanner, &sipClass_QwtPanner, 18, 2},
-        {sipName_QwtLegend, &sipClass_QwtLegend, -1, 3},
-        {sipName_QwtCounter, &sipClass_QwtCounter, -1, 4},
-        {sipName_QwtPicker, &sipClass_QwtPicker, 19, 5},
-        {sipName_QwtScaleWidget, &sipClass_QwtScaleWidget, -1, 6},
-        {sipName_QwtPlot, &sipClass_QwtPlot, -1, 7},
-        {sipName_QwtThermo, &sipClass_QwtThermo, -1, 8},
-        {sipName_QwtDynGridLayout, &sipClass_QwtDynGridLayout, -1, 9},
-        {sipName_QwtTextLabel, &sipClass_QwtTextLabel, 21, 10},
-        {sipName_QwtPlotCanvas, &sipClass_QwtPlotCanvas, -1, 11},
-        {sipName_QwtArrowButton, &sipClass_QwtArrowButton, -1, -1},
-        {sipName_QwtDial, &sipClass_QwtDial, 16, 13},
-        {sipName_QwtSlider, &sipClass_QwtSlider, -1, 14},
-        {sipName_QwtWheel, &sipClass_QwtWheel, -1, 15},
-        {sipName_QwtKnob, &sipClass_QwtKnob, -1, -1},
-        {sipName_QwtCompass, &sipClass_QwtCompass, -1, 17},
-        {sipName_QwtAnalogClock, &sipClass_QwtAnalogClock, -1, -1},
-        {sipName_QwtPlotPanner, &sipClass_QwtPlotPanner, -1, -1},
-        {sipName_QwtPlotPicker, &sipClass_QwtPlotPicker, 20, -1},
-        {sipName_QwtPlotZoomer, &sipClass_QwtPlotZoomer, -1, -1},
-        {sipName_QwtLegendItem, &sipClass_QwtLegendItem, -1, -1},
-    };
-    int i = 0;
-    sipClass = NULL;
-    do {
-        struct class_graph *cg = &graph[i];
-        if (cg->name != NULL && sipCpp->inherits(cg->name)) {
-            sipClass = *cg->type;
-            i = cg->yes;
-        } else {
-            i = cg->no;
-        }
-    } while (i >= 0);
-%End // %ConvertToSubClassCode
-%End // HAS_QWT5
+%End
 ''',
     }
 # EXTRA

@@ -315,6 +315,12 @@ sipCpp->QwtCurve::setData(xArray, yArray);
      '    QwtLegendItem(const QwtSymbol&, const QPen&, const QwtText&, QWidget* /TransferThis/ = 0);',
      },
 
+    'QwtMagnifier':
+    {'    QwtMagnifier(QWidget*);':
+     '    QwtMagnifier(QWidget* /TransferThis/);',
+    },
+    
+
     'QwtPicker':
     {'    QwtPicker(QWidget*, const char* = 0);':
      '    QwtPicker(QWidget* /TransferThis/, const char* = 0);',
@@ -515,8 +521,8 @@ sipRes = sipBuildResult(0, "(BBBB)",
      },
 
     'QwtPlotMagnifier':
-    {'    QwtPlotMagnifier(QwPlotCanvas*);':
-     '    QwtPlotMagnifier(QwPlotCanvas* /TransferThis/);',
+    {'    QwtPlotMagnifier(QwtPlotCanvas*);':
+     '    QwtPlotMagnifier(QwtPlotCanvas* /TransferThis/);',
     },
     
     'QwtPlotMarker':

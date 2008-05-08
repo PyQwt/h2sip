@@ -840,9 +840,12 @@ EXTRA = {
 %End
 ''',
     
+    # Private copy constructor prevents SIP to generate an assignment operator
     # ConvertToSubClass code for QwtData
     'QwtData':
     r'''
+private:
+    QwtData(const QwtData&);
 %If (CXX_DYNAMIC_CAST)
 %ConvertToSubClassCode
     // Walk the inheritance tree depth first in alphabetical order
@@ -955,6 +958,13 @@ sipCpp = new QwtScaleMap();
 sipCpp->setPaintInterval(a0, a1);
 sipCpp->setScaleInterval(a2, a3);
 %End
+''',
+
+    # Private copy constructor prevents SIP to generate an assignment operator
+    'QwtScaleTransformation':
+    r'''
+private:
+    QwtScaleTransformation(const QwtScaleTransformation&);
 ''',
 
     'QwtSliderBase':

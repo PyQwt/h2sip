@@ -536,8 +536,8 @@ sipRes = sipBuildResult(0, "(BBBB)",
      },
 
     'QwtPlotPanner':
-    {'    QwtPlotPanner(QWidget*);':
-     '    QwtPlotPanner(QWidget* /TransferThis/);',
+    {'    QwtPlotPanner(QwtPlotCanvas*);':
+     '    QwtPlotPanner(QwtPlotCanvas* /TransferThis/);',
      },
 
     'QwtPlotPicker':

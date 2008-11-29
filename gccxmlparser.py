@@ -289,7 +289,11 @@ class GccXmlParser(object):
         classname = self.getDeclaration(element.get('context')).fullName()
         virtual = bool(int(element.get('virtual', '0')))
         location = self.getLocation(element.get('location'))
-        destructor = Destructor(name, classname, visibility, virtual)
+        artificial = element.get('artificial', False)
+        if not artificial:
+            destructor = Destructor(name, classname, visibility, virtual)
+        else:
+            destructor = Unknown('__Unknown_Element_%s' % id)            
         destructor.location = location
         self.update(id, destructor)
 
@@ -363,8 +367,13 @@ class GccXmlParser(object):
         location = self.getLocation(element.get('location'))
         throws = self.getExceptions(element.get('throw', None))
         parameters = self.getArguments(element)
-        method = methodType(name, classname, result, parameters, visibility,
-                            virtual, abstract, static, const, throws)
+        artificial = element.get('artificial', False)
+        if not artificial:
+            method = methodType(name, classname, result, parameters, visibility,
+                                virtual, abstract, static, const, throws)
+        else:
+            # we don't want artificial methods
+            method = Unknown('__Unknown_Element_%s' % id)
         method.location = location
         self.update(id, method)
 

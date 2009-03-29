@@ -669,6 +669,22 @@ sipRes = sipBuildResult(0, "(BBBB)",
      '    virtual QwtText trackerText(const QwtDoublePoint&) const /PyName=trackerTextF/;',
      },
 
+    'QwtPlotSpectrogram':
+    {'    const QwtColorMap& colorMap() const;':
+     '''    const QwtColorMap& colorMap() const;
+%MethodCode
+sipRes = sipCpp->colorMap().copy();
+%End
+''',
+
+     '    const QwtRasterData& data() const;':
+     '''    const QwtRasterData& data() const;
+%MethodCode
+sipRes = sipCpp->data().copy();
+%End
+''',
+     },
+  
     'QwtPlotZoomer':
     {'    QwtPlotZoomer(QwtPlotCanvas*, const char* = 0);':
      '    QwtPlotZoomer(QwtPlotCanvas* /TransferThis/, const char* = 0);',
@@ -783,6 +799,13 @@ Py_END_ALLOW_THREADS
 
      '    void getMinBorderDist(int&, int&) const;':
      '    void getMinBorderDist(int& /Out/, int& /Out/) const;',
+
+     '    const QwtColorMap& colorMap() const;':
+     '''    const QwtColorMap& colorMap() const;
+%MethodCode
+sipRes = sipCpp->colorMap().copy();
+%End
+''',
      },
 
     'QwtSlider':
@@ -896,7 +919,7 @@ EXTRA = {
 // python mksccode PyQt4.Qwt5
 %ConvertToSubClassCode
     static struct class_graph {
-        char *name;
+        const char *name;
         sipWrapperType **type;
         int yes, no;
     } graph[] = {

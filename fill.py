@@ -223,20 +223,19 @@ public:
     %(ARRAY)s(const %(ARRAY)s &);
     %(ARRAY)s(SIP_PYLIST); 
 %%MethodCode
+    // FIXME
     QwtArray<%(ITEM)s> array(PyList_GET_SIZE(a0));
 
-    int failed = 0;
     for (int i = 0; i < PyList_GET_SIZE(a0); ++i) {
-        %(ITEM)s *item =
-            reinterpret_cast<%(ITEM)s *>(
-                sipForceConvertTo_%(FORCE)s(
-                    PyList_GET_ITEM(a0, i), &failed));
+        void *cpp = sipForceConvertToType(
+            PyList_GET_ITEM(a0, i),
+            sipType_%(ITEM)s,
+            NULL,
+            SIP_NO_CONVERTORS,
+            NULL,
+            &sipIsErr);
                     
-        if (failed) {
-            return 0;
-        }
-
-        array[i] = *item;
+        array[i] = *reinterpret_cast<%(ITEM)s*>(cpp);
     }
 
     sipCpp = new %(ARRAY)s(array);
@@ -342,20 +341,19 @@ public:
     %(ARRAY)s(const %(ARRAY)s &);
     %(ARRAY)s(SIP_PYLIST); 
 %%MethodCode
+    // FIXME
     QwtArray<%(ITEM)s> array(PyList_GET_SIZE(a0));
 
-    int failed = 0;
     for (int i = 0; i < PyList_GET_SIZE(a0); ++i) {
-        %(ITEM)s *item =
-            reinterpret_cast<%(ITEM)s *>(
-                sipForceConvertTo_%(FORCE)s(
-                    PyList_GET_ITEM(a0, i), &failed));
+        void *cpp = sipForceConvertToType(
+            PyList_GET_ITEM(a0, i),
+            sipType_%(ITEM)s,
+            NULL,
+            SIP_NO_CONVERTORS,
+            NULL,
+            &sipIsErr);
                     
-        if (failed) {
-            return 0;
-        }
-
-        array[i] = *item;
+        array[i] = *reinterpret_cast<%(ITEM)s*>(cpp);
     }
 
     sipCpp = new %(ARRAY)s(array);

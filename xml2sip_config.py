@@ -669,6 +669,12 @@ sipRes = sipBuildResult(0, "(BBBB)",
      '    virtual QwtText trackerText(const QwtDoublePoint&) const /PyName=trackerTextF/;',
      },
 
+
+    'QwtPlotRescaler':
+    {'    QwtPlotRescaler(QwtPlotCanvas*, int = xBottom, QwtPlotRescaler::RescalePolicy = Expanding);':
+     '    QwtPlotRescaler(QwtPlotCanvas*, int = QwtPlot::xBottom, QwtPlotRescaler::RescalePolicy = Expanding);',
+     },
+    
     'QwtPlotSpectrogram':
     {'    const QwtColorMap& colorMap() const;':
      '''    const QwtColorMap& colorMap() const;
@@ -857,16 +863,16 @@ if (1 != try_PyObject_to_QwtArray(a1, yArray))
      # Qwt5
      '    QMemArray<QwtDoublePoint> points() const;':
      r'''
-%If (Qwt_5_0_1 -)
+%If (Qwt_5_0_1 - )
     QMemArray<QwtDoublePoint> points() const;
-%End // (Qwt_5_0_1 -)
+%End // (Qwt_5_0_1 - )
 ''',
      
      '    QPolygonF points() const;':
      r'''
-%If (Qwt_5_0_1 -)
+%If (Qwt_5_0_1 - )
     QPolygonF points() const;
-%End // (Qwt_5_0_1 -)
+%End // (Qwt_5_0_1 - )
 ''',
      },
 

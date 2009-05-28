@@ -675,22 +675,6 @@ sipRes = sipBuildResult(0, "(BBBB)",
      '    QwtPlotRescaler(QwtPlotCanvas*, int = QwtPlot::xBottom, QwtPlotRescaler::RescalePolicy = Expanding);',
      },
     
-    'QwtPlotSpectrogram':
-    {'    const QwtColorMap& colorMap() const;':
-     '''    const QwtColorMap& colorMap() const;
-%MethodCode
-sipRes = sipCpp->colorMap().copy();
-%End
-''',
-
-     '    const QwtRasterData& data() const;':
-     '''    const QwtRasterData& data() const;
-%MethodCode
-sipRes = sipCpp->data().copy();
-%End
-''',
-     },
-  
     'QwtPlotZoomer':
     {'    QwtPlotZoomer(QwtPlotCanvas*, const char* = 0);':
      '    QwtPlotZoomer(QwtPlotCanvas* /TransferThis/, const char* = 0);',
@@ -805,13 +789,6 @@ Py_END_ALLOW_THREADS
 
      '    void getMinBorderDist(int&, int&) const;':
      '    void getMinBorderDist(int& /Out/, int& /Out/) const;',
-
-     '    const QwtColorMap& colorMap() const;':
-     '''    const QwtColorMap& colorMap() const;
-%MethodCode
-sipRes = sipCpp->colorMap().copy();
-%End
-''',
      },
 
     'QwtSlider':

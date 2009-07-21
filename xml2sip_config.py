@@ -770,6 +770,11 @@ Py_END_ALLOW_THREADS
      '    void getBorderDistHint(const QFont&, int& /Out/, int& /Out/) const;',
     },
 
+    'QwtScaleMap':
+    {'    void setTransformation(QwtScaleTransformation*);':
+     '    void setTransformation(QwtScaleTransformation* /Transfer/);',
+     },
+    
     'QwtScaleIf': # Qwt4
     {'    void setScaleDraw(QwtScaleDraw*);':
      '    void setScaleDraw(QwtScaleDraw* /Transfer/);',     

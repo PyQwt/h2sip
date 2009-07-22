@@ -669,7 +669,11 @@ sipRes = sipBuildResult(0, "(BBBB)",
      '    virtual QwtText trackerText(const QwtDoublePoint&) const /PyName=trackerTextF/;',
      },
 
-
+    'QwtPlotScaleItem':
+    {'    void setScaleDraw(QwtScaleDraw*);':
+     '    void setScaleDraw(QwtScaleDraw* /Transfer/);',
+     },
+    
     'QwtPlotRescaler':
     {'    QwtPlotRescaler(QwtPlotCanvas*, int = xBottom, QwtPlotRescaler::RescalePolicy = Expanding);':
      '    QwtPlotRescaler(QwtPlotCanvas*, int = QwtPlot::xBottom, QwtPlotRescaler::RescalePolicy = Expanding);',

@@ -75,6 +75,11 @@ MEMBERS =  {
      '    void setAbstractScaleDraw(QwtAbstractScaleDraw* /Transfer/);',
      },
 
+    'QwtAbstractScaleDraw':
+    {'    void setTransformation(QwtScaleTransformation*);':
+     '    void setTransformation(QwtScaleTransformation* /Transfer/);',
+     },
+
     'QwtAbstractSlider':
     {'    QwtAbstractSlider(Qt::Orientation, QWidget* = 0);':
      '    QwtAbstractSlider(Qt::Orientation, QWidget* /TransferThis/ = 0);',
@@ -314,6 +319,16 @@ sipCpp->QwtCurve::setData(xArray, yArray);
      '    QwtLegendItem(const QwtSymbol&, const QPen&, const QwtText&, QWidget* = 0);':
      '    QwtLegendItem(const QwtSymbol&, const QPen&, const QwtText&, QWidget* /TransferThis/ = 0);',
      },
+
+    'QwtLinearScaleEngine':
+    {'    virtual QwtScaleTransformation* transformation() const;':
+     '    virtual QwtScaleTransformation* transformation() const /Factory/;'
+     }, 
+
+    'QwtLog10ScaleEngine':
+    {'    virtual QwtScaleTransformation* transformation() const;':
+     '    virtual QwtScaleTransformation* transformation() const /Factory/;'
+     }, 
 
     'QwtMagnifier':
     {'    QwtMagnifier(QWidget*);':
@@ -773,6 +788,11 @@ Py_END_ALLOW_THREADS
      '    void getBorderDistHint(const QFont&, int&, int&) const;': # Qwt5
      '    void getBorderDistHint(const QFont&, int& /Out/, int& /Out/) const;',
     },
+
+    'QwtScaleEngine':
+    {'    virtual QwtScaleTransformation* transformation() const = 0;':
+     '    virtual QwtScaleTransformation* transformation() const = 0 /Factory/;'
+     }, 
 
     'QwtScaleMap':
     {'    void setTransformation(QwtScaleTransformation*);':

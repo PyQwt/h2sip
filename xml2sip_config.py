@@ -102,6 +102,7 @@ MEMBERS =  {
 
      '    virtual void setHand(QwtAnalogClock::Hand, QwtDialNeedle*);':
      '    virtual void setHand(QwtAnalogClock::Hand, QwtDialNeedle* /Transfer/);',
+     
      '    void setTime(const QTime& = QTime::currentTime()());':
      '    void setTime(const QTime& = QTime::currentTime());',
 
@@ -322,12 +323,18 @@ sipCpp->QwtCurve::setData(xArray, yArray);
 
     'QwtLinearScaleEngine':
     {'    virtual QwtScaleTransformation* transformation() const;':
-     '    virtual QwtScaleTransformation* transformation() const /Factory/;'
+     '    virtual QwtScaleTransformation* transformation() const /Factory/;',
+     
+     '    virtual void autoScale(int, double&, double&, double&) const;':
+     '    virtual void autoScale(int, double& /In, Out/, double& /In, Out/, double&) const;',
      }, 
 
     'QwtLog10ScaleEngine':
     {'    virtual QwtScaleTransformation* transformation() const;':
-     '    virtual QwtScaleTransformation* transformation() const /Factory/;'
+     '    virtual QwtScaleTransformation* transformation() const /Factory/;',
+     
+     '    virtual void autoScale(int, double&, double&, double&) const;':
+     '    virtual void autoScale(int, double& /In, Out/, double& /In, Out/, double&) const;',
      }, 
 
     'QwtMagnifier':
@@ -668,6 +675,7 @@ sipRes = sipBuildResult(0, "(BBBB)",
      
      '    QwtPlotPicker(int, int, QwtPlotCanvas*, const char* = 0);':
      '    QwtPlotPicker(int, int, QwtPlotCanvas* /TransferThis/, const char* = 0);',
+     
      '    QwtPlotPicker(int, int, int, QwtPicker::RubberBand, QwtPicker::DisplayMode, QwtPlotCanvas*, const char* = 0);':
      '    QwtPlotPicker(int, int, int, QwtPicker::RubberBand, QwtPicker::DisplayMode, QwtPlotCanvas* /TransferThis/, const char* = 0);',
      # Qwt5
@@ -717,8 +725,10 @@ sipRes = sipBuildResult(0, "(BBBB)",
     'QwtPushButton':
     {'    QwtPushButton(QWidget* = 0, const char* = 0);':
      '    QwtPushButton(QWidget* /TransferThis/ = 0, const char* = 0);',
+     
      '    QwtPushButton(const QString&, QWidget* = 0, const char* = 0);':
      '    QwtPushButton(const QString&, QWidget* /TransferThis/ = 0, const char* = 0);',
+     
      '    QwtPushButton(const QIconSet&, const QString&, QWidget* = 0, const char* = 0);':
      '    QwtPushButton(const QIconSet&, const QString&, QWidget* /TransferThis/ = 0, const char* = 0);',
     },
@@ -791,12 +801,18 @@ Py_END_ALLOW_THREADS
 
     'QwtScaleEngine':
     {'    virtual QwtScaleTransformation* transformation() const = 0;':
-     '    virtual QwtScaleTransformation* transformation() const = 0 /Factory/;'
+     '    virtual QwtScaleTransformation* transformation() const = 0 /Factory/;',
+
+     '    virtual void autoScale(int, double&, double&, double&) const = 0;':
+     '    virtual void autoScale(int, double& /In, Out/, double& /In, Out/, double&) const = 0;',
      }, 
 
     'QwtScaleMap':
     {'    void setTransformation(QwtScaleTransformation*);':
      '    void setTransformation(QwtScaleTransformation* /Transfer/);',
+     
+     '    const QwtScaleTransformation* transformation() const;':
+     '    const QwtScaleTransformation* transformation() const /Transfer/;',
      },
     
     'QwtScaleIf': # Qwt4
@@ -818,6 +834,18 @@ Py_END_ALLOW_THREADS
 
      '    void getMinBorderDist(int&, int&) const;':
      '    void getMinBorderDist(int& /Out/, int& /Out/) const;',
+
+     '    void setScaleDiv(QwtScaleTransformation*, const QwtScaleDiv&);':
+     '    void setScaleDiv(QwtScaleTransformation* /Transfer/, const QwtScaleDiv&);',
+     
+     '    void setScaleDraw(QwtScaleDraw*);':
+     '    void setScaleDraw(QwtScaleDraw*) /Transfer/;',
+
+     '    const QwtScaleDraw* scaleDraw() const;':
+     '    // signature: const QwtScaleDraw* scaleDraw() const /Transfer/;',
+
+     '    QwtScaleDraw* scaleDraw();':
+     '    QwtScaleDraw* scaleDraw() /Transfer/;',
      },
 
     'QwtSlider':
@@ -898,6 +926,13 @@ if (1 != try_PyObject_to_QwtArray(a1, yArray))
 
      '    QwtTextLabel(const QwtText&, QWidget* = 0);':
      '    QwtTextLabel(const QwtText&, QWidget* /TransferThis/ = 0);',
+    },
+
+    'QwtText':
+    {'    QwtText(const QString& = QString::null, QwtText::TextFormat = QwtText::AutoText);':
+     '''    QwtText();
+    QwtText(const QString&);
+    QwtText(const QString&, QwtText::TextFormat);''',
     },
     
     'QwtThermo':

@@ -235,7 +235,7 @@ def main():
               '4.2.0-3.3.8',
               ('gccxml'
                ' -I.'
-               ' -I/usr/qt/3/include'
+               ' -I/home/gav/usr/lib/qt3.3/include'
                ' %s -fxml=%s -fxml-start=%s'),
               (('QMemArray<double>', 'QwtArrayDouble'),
                ('QMemArray<int>', 'QwtArrayInt',),
@@ -262,7 +262,7 @@ def main():
                   mix,
                   ('gccxml'
                    ' -I.'
-                   ' -I/usr/qt/3/include'
+                   ' -I/home/gav/usr/lib/qt3.3/include'
                    ' %s -fxml=%s -fxml-start=%s'),
                   (('QMemArray<double>', 'QwtArrayDouble'),
                    ('QMemArray<int>', 'QwtArrayInt',),
@@ -272,16 +272,16 @@ def main():
                   force)
 
     for sources, mix in (
-        (os.path.join('qwt-5.0.0', 'src', '*.h'), '5.0.0-4.5.0'),
-        (os.path.join('qwt-5.0.1', 'src', '*.h'), '5.0.1-4.5.0'),
-        (os.path.join('qwt-5.0.2', 'src', '*.h'), '5.0.2-4.5.0'),
-        (os.path.join('qwt-5.1.0', 'src', '*.h'), '5.1.0-4.5.0'),
-        (os.path.join('qwt-5.1.1', 'src', '*.h'), '5.1.1-4.5.0'),
-        (os.path.join('qwt-5.1.2', 'src', '*.h'), '5.1.2-4.5.0'),
-        (os.path.join('qwt-5.2.0', 'src', '*.h'), '5.2.0-4.5.0'),
-        (os.path.join('qwt-5.0', 'src', '*.h'), '5.0.3-4.5.0'),
-        (os.path.join('qwt-5.1', 'src', '*.h'), '5.1.3-4.5.0'),
-        (os.path.join('qwt-5.2', 'src', '*.h'), '5.2.1-4.5.0'),
+        (os.path.join('qwt-5.0.0', 'src', '*.h'), '5.0.0-4.6.3'),
+        (os.path.join('qwt-5.0.1', 'src', '*.h'), '5.0.1-4.6.3'),
+        (os.path.join('qwt-5.0.2', 'src', '*.h'), '5.0.2-4.6.3'),
+        (os.path.join('qwt-5.1.0', 'src', '*.h'), '5.1.0-4.6.3'),
+        (os.path.join('qwt-5.1.1', 'src', '*.h'), '5.1.1-4.6.3'),
+        (os.path.join('qwt-5.1.2', 'src', '*.h'), '5.1.2-4.6.3'),
+        (os.path.join('qwt-5.2.0', 'src', '*.h'), '5.2.0-4.6.3'),
+        (os.path.join('qwt-5.0',   'src', '*.h'), '5.0.3-4.6.3'),
+        (os.path.join('qwt-5.1',   'src', '*.h'), '5.1.3-4.6.3'),
+        (os.path.join('qwt-5.2',   'src', '*.h'), '5.2.1-4.6.3'),
         ):
         run_h2sip('pyqwt5',
                   sources,
@@ -331,16 +331,16 @@ def main():
                         ('Qwt_5_2_0', '5.2.0-3.3.8'),
                         ('Qwt_5_2_1', '5.2.1-3.3.8'),
                         ),
-            'qwt5qt4': (('Qwt_5_0_0', '5.0.0-4.5.0'),
-                        ('Qwt_5_0_1', '5.0.1-4.5.0'),
-                        ('Qwt_5_0_2', '5.0.2-4.5.0'),
-                        ('Qwt_5_0_3', '5.0.3-4.5.0'),
-                        ('Qwt_5_1_0', '5.1.0-4.5.0'),
-                        ('Qwt_5_1_1', '5.1.1-4.5.0'),
-                        ('Qwt_5_1_2', '5.1.2-4.5.0'),
-                        ('Qwt_5_1_3', '5.1.3-4.5.0'),
-                        ('Qwt_5_2_0', '5.2.0-4.5.0'),
-                        ('Qwt_5_2_1', '5.2.1-4.5.0'),
+            'qwt5qt4': (('Qwt_5_0_0', '5.0.0-4.6.3'),
+                        ('Qwt_5_0_1', '5.0.1-4.6.3'),
+                        ('Qwt_5_0_2', '5.0.2-4.6.3'),
+                        ('Qwt_5_0_3', '5.0.3-4.6.3'),
+                        ('Qwt_5_1_0', '5.1.0-4.6.3'),
+                        ('Qwt_5_1_1', '5.1.1-4.6.3'),
+                        ('Qwt_5_1_2', '5.1.2-4.6.3'),
+                        ('Qwt_5_1_3', '5.1.3-4.6.3'),
+                        ('Qwt_5_2_0', '5.2.0-4.6.3'),
+                        ('Qwt_5_2_1', '5.2.1-4.6.3'),
                         ),
             }
     for target, pairs in jobs.iteritems():

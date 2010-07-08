@@ -554,8 +554,8 @@ if __name__ == '__main__':
         else:
             raise IndexError
     except IndexError:
-        print 'Usage: ./fill qwt5qt3'
-        print 'or   : ./fill qwt5qt4'
+        print 'Usage: ./fill.py qwt5qt3'
+        print 'or   : ./fill.py qwt5qt4'
         raise SystemExit
 
 
